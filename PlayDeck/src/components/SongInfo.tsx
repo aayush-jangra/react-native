@@ -1,52 +1,57 @@
 import React from 'react';
 import {View, StyleSheet, Text, Image} from 'react-native';
-import {useActiveTrack, useProgress} from 'react-native-track-player';
-import {formatTime} from '../utils/formatTime';
+import {useActiveTrack} from 'react-native-track-player';
+import IconMaterialCommunity from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const styles = StyleSheet.create({
-  text: {
-    color: 'white',
-    fontSize: 16,
-  },
-  titleContainer: {
-    flex: 1,
-    display: 'flex',
-    justifyContent: 'center',
-  },
-  title: {
-    fontSize: 44,
+  songName: {
+    fontSize: 40,
     fontWeight: 'bold',
+    color: '#FEFFF2',
   },
-  titleSmall: {
-    fontSize: 24,
-    fontWeight: 'bold',
+  songDetails: {
+    fontSize: 20,
+    fontWeight: '500',
+    color: '#FEFFF2',
   },
   container: {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
+    justifyContent: 'center',
     padding: 12,
     gap: 16,
-    height: '100%',
+    flex: 1,
   },
   artwork: {
     height: 'auto',
-    width: 'auto',
-    flex: 1,
+    width: '80%',
     aspectRatio: 1,
     borderRadius: 16,
+    elevation: 10,
+  },
+  defaultArtwork: {
+    backgroundColor: '#002617',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  songInfo: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 2,
   },
 });
 
 export const SongInfo = () => {
   const track = useActiveTrack();
-  const {position, duration} = useProgress(1000);
 
   if (!track) {
     return (
       <View style={styles.container}>
-        <Text style={styles.text}>No track playing</Text>
-        <Text style={styles.text}>-/-</Text>
+        <Text style={styles.songName}>No track playing</Text>
       </View>
     );
   }
@@ -54,25 +59,33 @@ export const SongInfo = () => {
   return (
     <View style={styles.container}>
       {track.artwork ? (
-        <>
-          <View style={styles.titleContainer}>
-            <Image source={{uri: track.artwork}} style={styles.artwork} />
-          </View>
-          <Text style={[styles.text, styles.titleSmall]}>{track.title}</Text>
-          <Text style={styles.text}>
-            {`${formatTime(position)} / ${formatTime(duration)}`}
-          </Text>
-        </>
+        <Image source={{uri: track.artwork}} style={styles.artwork} />
       ) : (
-        <>
-          <View style={styles.titleContainer}>
-            <Text style={[styles.text, styles.title]}>{track.title}</Text>
-          </View>
-          <Text style={styles.text}>
-            {`${formatTime(position)} / ${formatTime(duration)}`}
-          </Text>
-        </>
+        <View style={[styles.artwork, styles.defaultArtwork]}>
+          <IconMaterialCommunity
+            name="music-clef-treble"
+            size={96}
+            color={'#85FDF7'}
+          />
+        </View>
       )}
+      <View style={styles.songInfo}>
+        <Text style={styles.songName}>{track.title}</Text>
+        {track.artist ? (
+          <Text numberOfLines={1} style={styles.songDetails}>
+            {track.artist}
+          </Text>
+        ) : (
+          <Text style={styles.songDetails}>{''}</Text>
+        )}
+        {track.album ? (
+          <Text numberOfLines={1} style={styles.songDetails}>
+            {track.album}
+          </Text>
+        ) : (
+          <Text style={styles.songDetails}>{''}</Text>
+        )}
+      </View>
     </View>
   );
 };

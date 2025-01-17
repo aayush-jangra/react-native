@@ -10,13 +10,17 @@ export const musicQueue: Track[] = [
   {
     url: require('../assets/audio/two.mp3'),
     title: 'Song two',
+    artist: 'AJ',
+    album: 'Awesome',
   },
   {
     url: require('../assets/audio/three.mp3'),
     title: 'Song three',
+    album: 'Awesome',
   },
   {
     url: require('../assets/audio/four.mp3'),
     title: 'Song four',
+    artist: 'AJ is the name is the, what is this text doing is the',
   },
 ];

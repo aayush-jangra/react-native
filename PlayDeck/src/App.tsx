@@ -13,11 +13,14 @@ import {musicQueue} from './constants/musicQueue';
 import {Controls} from './components/Controls';
 import {SongInfo} from './components/SongInfo';
 import {QueueList} from './components/QueueList';
+import LinearGradient from 'react-native-linear-gradient';
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#000',
+  },
+  linearGradient: {
+    flex: 1,
     padding: 4,
   },
   text: {
@@ -25,8 +28,6 @@ const styles = StyleSheet.create({
   },
   section: {
     flex: 1,
-    borderWidth: 1,
-    borderColor: 'white',
     marginVertical: 4,
     marginHorizontal: 8,
     borderRadius: 16,
@@ -70,27 +71,27 @@ const App = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      {showQueue ? (
-        <View style={styles.section}>
-          <QueueList />
-        </View>
-      ) : (
-        <>
+      <LinearGradient
+        colors={['#BCFEFF', '#08BF96', '#028C65', '#00593B', '#002617']}
+        style={styles.linearGradient}>
+        {showQueue ? (
           <View style={styles.section}>
+            <QueueList />
+          </View>
+        ) : (
+          <>
             <SongInfo />
-          </View>
-          <View style={styles.section}>
             <Controls />
-          </View>
-        </>
-      )}
-      <TouchableOpacity
-        style={styles.queueSection}
-        onPress={() => setShowQueue(prev => !prev)}>
-        <Text style={styles.text}>
-          {showQueue ? 'Hide Queue' : 'Show Queue'}
-        </Text>
-      </TouchableOpacity>
+          </>
+        )}
+        <TouchableOpacity
+          style={styles.queueSection}
+          onPress={() => setShowQueue(prev => !prev)}>
+          <Text style={styles.text}>
+            {showQueue ? 'Hide Queue' : 'Show Queue'}
+          </Text>
+        </TouchableOpacity>
+      </LinearGradient>
     </SafeAreaView>
   );
 };
