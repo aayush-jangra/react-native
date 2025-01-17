@@ -9,9 +9,11 @@ import {
 import TrackPlayer, {
   RepeatMode,
   State,
+  Track,
   usePlaybackState,
   useProgress,
 } from 'react-native-track-player';
+import {shuffleArray} from '../utils/shuffle';
 
 const styles = StyleSheet.create({
   text: {
@@ -77,6 +79,28 @@ export const Controls = () => {
     } else {
       TrackPlayer.skipToPrevious();
     }
+    TrackPlayer.play();
+  };
+
+  const shuffleQueue = async () => {
+    const playingPosition = position;
+    const [queue, playingIndex] = await Promise.all([
+      TrackPlayer.getQueue(),
+      TrackPlayer.getActiveTrackIndex(),
+    ]);
+
+    let startTrack: Track | null = null;
+
+    if (playingIndex !== undefined) {
+      startTrack = queue.splice(playingIndex, 1)[0];
+    }
+    shuffleArray(queue);
+    if (startTrack) {
+      queue.unshift(startTrack);
+    }
+
+    await TrackPlayer.setQueue(queue);
+    await TrackPlayer.skip(0, playingPosition);
   };
 
   const changeRepeatMode = async () => {
@@ -115,12 +139,15 @@ export const Controls = () => {
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.button}
-          onPress={() => TrackPlayer.skipToNext()}>
+          onPress={() => {
+            TrackPlayer.skipToNext();
+            TrackPlayer.play();
+          }}>
           <Text style={styles.text}>Next</Text>
         </TouchableOpacity>
       </View>
       <View style={styles.controlsContainer}>
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity style={styles.button} onPress={() => shuffleQueue()}>
           <Text style={styles.text}>Shuffle</Text>
         </TouchableOpacity>
         <TouchableOpacity
