@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -7,13 +7,11 @@ import {
   Text,
   TouchableOpacity,
 } from 'react-native';
-import {setupPlayer} from './services/PlaybackService';
-import TrackPlayer from 'react-native-track-player';
-import {musicQueue} from './constants/musicQueue';
 import {Controls} from './components/Controls';
 import {SongInfo} from './components/SongInfo';
 import {QueueList} from './components/QueueList';
 import LinearGradient from 'react-native-linear-gradient';
+import {useAppState} from './Providers/AppProvider';
 
 const styles = StyleSheet.create({
   container: {
@@ -45,21 +43,8 @@ const styles = StyleSheet.create({
 });
 
 const App = () => {
-  const [isPlayerSetup, setIsPlayerSetup] = useState(false);
   const [showQueue, setShowQueue] = useState(false);
-
-  const setupTrackPlayer = async () => {
-    const isSetup = await setupPlayer();
-
-    if (isSetup) {
-      await TrackPlayer.add(musicQueue);
-      setIsPlayerSetup(true);
-    }
-  };
-
-  useEffect(() => {
-    setupTrackPlayer();
-  }, []);
+  const {isPlayerSetup} = useAppState();
 
   if (!isPlayerSetup) {
     return (

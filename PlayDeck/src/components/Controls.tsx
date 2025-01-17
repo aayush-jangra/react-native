@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   TouchableOpacity,
@@ -9,16 +9,15 @@ import {
 import TrackPlayer, {
   RepeatMode,
   State,
-  Track,
   usePlaybackState,
   useProgress,
 } from 'react-native-track-player';
 import IconEntypo from 'react-native-vector-icons/Entypo';
 import IconMaterial from 'react-native-vector-icons/MaterialIcons';
 import IconMaterialCommunity from 'react-native-vector-icons/MaterialCommunityIcons';
-import {shuffleArray} from '../utils/shuffle';
 import {formatTime} from '../utils/formatTime';
 import Slider from '@react-native-community/slider';
+import {useShuffleQueue} from '../hooks/useShuffleQueue';
 
 const styles = StyleSheet.create({
   text: {
@@ -68,8 +67,7 @@ export const Controls = () => {
   const playerState = usePlaybackState();
   const {position, duration} = useProgress(1000);
   const [repeatMode, setRepeatMode] = useState<RepeatMode | null>(null);
-  const [isShuffled, setIsShuffled] = useState(false);
-  const unshuffledQueue = useRef<Track[] | null>(null);
+  const {isShuffled, shuffleQueue} = useShuffleQueue();
 
   const loading = playerState.state === undefined;
   const isPlaying = !loading && playerState.state === State.Playing;
@@ -99,43 +97,6 @@ export const Controls = () => {
       TrackPlayer.skipToPrevious();
     }
     TrackPlayer.play();
-  };
-
-  const shuffleQueue = async () => {
-    const playingPosition = position;
-    const [queue, playingIndex] = await Promise.all([
-      TrackPlayer.getQueue(),
-      TrackPlayer.getActiveTrackIndex(),
-    ]);
-
-    if (isShuffled && unshuffledQueue.current) {
-      const newTrackIndex =
-        playingIndex !== undefined
-          ? unshuffledQueue.current.findIndex(
-              track => track.title === queue[playingIndex].title,
-            )
-          : 0;
-
-      await TrackPlayer.setQueue(unshuffledQueue.current);
-      setIsShuffled(false);
-      await TrackPlayer.skip(newTrackIndex, playingPosition);
-    } else {
-      unshuffledQueue.current = queue;
-
-      let startTrack: Track | null = null;
-
-      if (playingIndex !== undefined) {
-        startTrack = queue.splice(playingIndex, 1)[0];
-      }
-      shuffleArray(queue);
-      if (startTrack) {
-        queue.unshift(startTrack);
-      }
-      setIsShuffled(true);
-
-      await TrackPlayer.setQueue(queue);
-      await TrackPlayer.skip(0, playingPosition);
-    }
   };
 
   const changeRepeatMode = async () => {
