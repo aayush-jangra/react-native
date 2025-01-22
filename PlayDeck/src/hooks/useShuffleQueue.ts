@@ -13,8 +13,6 @@ export const useShuffleQueue = () => {
       TrackPlayer.getActiveTrackIndex(),
     ]);
 
-    console.log('====', isShuffled, startQueue);
-
     // Already shuffled queue, now we want to unshuffle it
     if (isShuffled && startQueue) {
       const newTrackIndex =
