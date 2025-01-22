@@ -1,21 +1,12 @@
 import React from 'react';
-import {SafeAreaView, StyleSheet, View, ActivityIndicator} from 'react-native';
-import {Controls} from './components/Controls';
-import {SongInfo} from './components/SongInfo';
-import {QueueList} from './components/QueueList';
-import LinearGradient from 'react-native-linear-gradient';
+import {SafeAreaView, StyleSheet, ActivityIndicator} from 'react-native';
 import {useAppState} from './Providers/AppProvider';
+// import {PlayerPage} from './pages/PlayerPage';
+import {LibraryPage} from './pages/LibraryPage';
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  linearGradient: {
-    flex: 1,
-    padding: 4,
-  },
-  queueSpace: {
-    height: 64,
   },
 });
 
@@ -32,14 +23,8 @@ const App = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <LinearGradient
-        colors={['#BCFEFF', '#08BF96', '#028C65', '#00593B', '#002617']}
-        style={styles.linearGradient}>
-        <SongInfo />
-        <Controls />
-        <View style={styles.queueSpace} />
-      </LinearGradient>
-      <QueueList />
+      {/* <PlayerPage /> */}
+      <LibraryPage />
     </SafeAreaView>
   );
 };
