@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   StyleSheet,
@@ -59,6 +59,13 @@ export const QueueList = () => {
   const [showQueue, setShowQueue] = useState(false);
   const {height: screenHeight} = Dimensions.get('window');
   const eightyPercentHeight = screenHeight * 0.8;
+
+  useEffect(() => {
+    (async () => {
+      const ati = await TrackPlayer.getActiveTrackIndex();
+      setCurrentTrackIndex(ati);
+    })();
+  }, []);
 
   TrackPlayer.addEventListener(Event.PlaybackActiveTrackChanged, ({index}) => {
     setCurrentTrackIndex(index);

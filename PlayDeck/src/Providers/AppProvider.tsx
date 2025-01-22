@@ -2,7 +2,7 @@ import React, {createContext, useContext, useEffect, useState} from 'react';
 import {AppState} from '../schema/appState';
 import TrackPlayer, {Track} from 'react-native-track-player';
 import {setupPlayer} from '../services/PlaybackService';
-import {musicQueue} from '../constants/musicQueue';
+import {shuffleArray} from '../utils/shuffle';
 
 const AppContext = createContext<AppState | undefined>(undefined);
 
@@ -10,15 +10,13 @@ export const AppProvider = ({children}: {children: React.ReactNode}) => {
   const [isShuffled, setIsShuffled] = useState(false);
   const [startQueue, setStartQueue] = useState<Track[] | null>(null);
   const [isPlayerSetup, setIsPlayerSetup] = useState(false);
+  const [showPlayer, setShowPlayer] = useState(false);
   const [queue, setQueue] = useState<Track[] | null>(null);
 
   const setupTrackPlayer = async () => {
     const isSetup = await setupPlayer();
 
     if (isSetup) {
-      await TrackPlayer.add(musicQueue);
-      setStartQueue(musicQueue);
-      setQueue(musicQueue);
       setIsPlayerSetup(true);
     }
   };
@@ -27,11 +25,36 @@ export const AppProvider = ({children}: {children: React.ReactNode}) => {
     setupTrackPlayer();
   }, []);
 
+  const playNewPlaylist = async ({
+    tracks,
+    shuffle = false,
+    skipIndex = 0,
+  }: {
+    tracks: Track[];
+    shuffle?: boolean;
+    skipIndex?: number;
+  }) => {
+    const newPlaylist = [...tracks];
+    setStartQueue([...tracks]);
+    if (shuffle) {
+      shuffleArray(newPlaylist);
+      setIsShuffled(true);
+    }
+    await TrackPlayer.reset();
+    await TrackPlayer.add(newPlaylist);
+    await TrackPlayer.skip(skipIndex);
+    setQueue(newPlaylist);
+    await TrackPlayer.play();
+  };
+
   return (
     <AppContext.Provider
       value={{
         queue,
         setQueue,
+        playNewPlaylist,
+        showPlayer,
+        setShowPlayer,
         isShuffled,
         setIsShuffled,
         startQueue,

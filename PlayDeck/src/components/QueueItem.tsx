@@ -8,6 +8,7 @@ interface QueueItemProps {
   item: Track;
   currentTrack?: boolean;
   onPress?: () => void;
+  showDuration?: boolean;
 }
 
 const styles = StyleSheet.create({
@@ -45,6 +46,7 @@ const styles = StyleSheet.create({
 export const QueueItem = ({
   item,
   currentTrack = false,
+  showDuration = true,
   onPress,
 }: QueueItemProps) => {
   return (
@@ -65,9 +67,11 @@ export const QueueItem = ({
           {item.artist}
         </Text>
       </View>
-      <Text style={styles.duration}>
-        {item.duration ? formatTime(item.duration) : '-- / --'}
-      </Text>
+      {showDuration && (
+        <Text style={styles.duration}>
+          {item.duration ? formatTime(item.duration) : '-- / --'}
+        </Text>
+      )}
     </TouchableOpacity>
   );
 };
