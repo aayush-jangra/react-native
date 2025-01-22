@@ -8,4 +8,6 @@ export interface AppState {
   setIsPlayerSetup: Dispatch<SetStateAction<boolean>>;
   startQueue: Track[] | null;
   setStartQueue: Dispatch<SetStateAction<Track[] | null>>;
+  queue: Track[] | null;
+  setQueue: Dispatch<SetStateAction<Track[] | null>>;
 }

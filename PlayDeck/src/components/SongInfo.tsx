@@ -1,7 +1,7 @@
 import React from 'react';
 import {View, StyleSheet, Text, Image} from 'react-native';
 import {useActiveTrack} from 'react-native-track-player';
-import IconMaterialCommunity from 'react-native-vector-icons/MaterialCommunityIcons';
+import {DefaultArtwork} from './DefaultArtwork';
 
 const styles = StyleSheet.create({
   songName: {
@@ -30,12 +30,6 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     elevation: 10,
   },
-  defaultArtwork: {
-    backgroundColor: '#002617',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
   songInfo: {
     display: 'flex',
     flexDirection: 'column',
@@ -61,13 +55,7 @@ export const SongInfo = () => {
       {track.artwork ? (
         <Image source={{uri: track.artwork}} style={styles.artwork} />
       ) : (
-        <View style={[styles.artwork, styles.defaultArtwork]}>
-          <IconMaterialCommunity
-            name="music-clef-treble"
-            size={96}
-            color={'#85FDF7'}
-          />
-        </View>
+        <DefaultArtwork />
       )}
       <View style={styles.songInfo}>
         <Text style={styles.songName}>{track.title}</Text>

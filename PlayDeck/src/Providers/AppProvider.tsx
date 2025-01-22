@@ -10,6 +10,7 @@ export const AppProvider = ({children}: {children: React.ReactNode}) => {
   const [isShuffled, setIsShuffled] = useState(false);
   const [startQueue, setStartQueue] = useState<Track[] | null>(null);
   const [isPlayerSetup, setIsPlayerSetup] = useState(false);
+  const [queue, setQueue] = useState<Track[] | null>(null);
 
   const setupTrackPlayer = async () => {
     const isSetup = await setupPlayer();
@@ -17,6 +18,7 @@ export const AppProvider = ({children}: {children: React.ReactNode}) => {
     if (isSetup) {
       await TrackPlayer.add(musicQueue);
       setStartQueue(musicQueue);
+      setQueue(musicQueue);
       setIsPlayerSetup(true);
     }
   };
@@ -28,6 +30,8 @@ export const AppProvider = ({children}: {children: React.ReactNode}) => {
   return (
     <AppContext.Provider
       value={{
+        queue,
+        setQueue,
         isShuffled,
         setIsShuffled,
         startQueue,

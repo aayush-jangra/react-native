@@ -4,7 +4,7 @@ import {useAppState} from '../Providers/AppProvider';
 
 export const useShuffleQueue = () => {
   const {position} = useProgress(1000);
-  const {isShuffled, setIsShuffled, startQueue} = useAppState();
+  const {isShuffled, setIsShuffled, startQueue, setQueue} = useAppState();
 
   const shuffleQueue = async () => {
     const playingPosition = position;
@@ -26,6 +26,8 @@ export const useShuffleQueue = () => {
       await TrackPlayer.add(startQueue);
       setIsShuffled(false);
       await TrackPlayer.skip(newTrackIndex, playingPosition);
+      await TrackPlayer.play();
+      setQueue(startQueue);
     }
     // Shuffle the queue
     else {
@@ -42,6 +44,7 @@ export const useShuffleQueue = () => {
 
       await TrackPlayer.setQueue(queue);
       await TrackPlayer.skip(0, playingPosition);
+      setQueue(queue);
     }
   };
 

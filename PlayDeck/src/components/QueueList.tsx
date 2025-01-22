@@ -1,52 +1,40 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {
   View,
-  Text,
   StyleSheet,
   ActivityIndicator,
   FlatList,
-  Image,
-  TouchableOpacity,
+  Pressable,
+  Dimensions,
 } from 'react-native';
-import TrackPlayer, {Track} from 'react-native-track-player';
-import {formatTime} from '../utils/formatTime';
+import TrackPlayer, {Event} from 'react-native-track-player';
+import IconMaterial from 'react-native-vector-icons/MaterialIcons';
+import {QueueItem} from './QueueItem';
+import {useAppState} from '../Providers/AppProvider';
+
+const QUEUE_BUTTON_HEIGHT = 64;
 
 const styles = StyleSheet.create({
-  text: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: 'bold',
-    flex: 1,
-  },
-  duration: {
-    color: 'gray',
-    fontSize: 16,
-  },
   container: {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-around',
-    padding: 12,
     gap: 16,
-    height: '100%',
+    position: 'absolute',
+    left: 0,
+    top: '100%',
+    width: '100%',
+    backgroundColor: '#001712',
+    borderColor: '#E6C72E',
+    borderWidth: 1,
+    borderBottomWidth: 0,
+    borderTopRightRadius: 24,
+    borderTopLeftRadius: 24,
+    elevation: 100,
   },
   loading: {
     height: '100%',
     width: '100%',
-  },
-  queueItem: {
-    padding: 12,
-    display: 'flex',
-    flexDirection: 'row',
-    gap: 16,
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: 'white',
-    marginVertical: 4,
-  },
-  selectedItem: {
-    borderColor: 'green',
-    backgroundColor: 'rgba(255,0,0,0.3)',
   },
   list: {
     flex: 1,
@@ -54,27 +42,27 @@ const styles = StyleSheet.create({
     display: 'flex',
     gap: 8,
   },
+  queueIcon: {
+    height: QUEUE_BUTTON_HEIGHT,
+    width: '100%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
 });
 
 export const QueueList = () => {
-  const [queue, setQueue] = useState<Track[] | null>(null);
-  const [currentTrackIndex, setCurrentTrackIndex] = useState<number | null>(
-    null,
-  );
+  const {queue} = useAppState();
+  const [currentTrackIndex, setCurrentTrackIndex] = useState<
+    number | undefined
+  >();
+  const [showQueue, setShowQueue] = useState(false);
+  const {height: screenHeight} = Dimensions.get('window');
+  const eightyPercentHeight = screenHeight * 0.8;
 
-  useEffect(() => {
-    (async () => {
-      const trackQueue = await TrackPlayer.getQueue();
-      setQueue(trackQueue);
-
-      const trackIndex = await TrackPlayer.getActiveTrackIndex();
-      trackIndex !== undefined && setCurrentTrackIndex(trackIndex);
-    })();
-  }, []);
-
-  if (!queue) {
-    return <ActivityIndicator style={styles.loading} size={96} />;
-  }
+  TrackPlayer.addEventListener(Event.PlaybackActiveTrackChanged, ({index}) => {
+    setCurrentTrackIndex(index);
+  });
 
   const playFromQueue = async (index: number) => {
     await TrackPlayer.skip(index);
@@ -83,32 +71,44 @@ export const QueueList = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <FlatList
-        style={styles.list}
-        data={queue}
-        renderItem={({item, index}) => {
-          return (
-            <TouchableOpacity
-              key={item.title}
-              style={[
-                styles.queueItem,
-                currentTrackIndex !== null && currentTrackIndex === index
-                  ? styles.selectedItem
-                  : {},
-              ]}
-              onPress={() => playFromQueue(index)}>
-              {item.artwork && (
-                <Image source={{uri: item.artwork}} height={16} width={16} />
-              )}
-              <Text style={styles.text}>{item.title}</Text>
-              <Text style={styles.duration}>
-                {item.duration ? formatTime(item.duration) : '-- / --'}
-              </Text>
-            </TouchableOpacity>
-          );
-        }}
-      />
+    <View
+      style={[
+        styles.container,
+        showQueue
+          ? {
+              height: eightyPercentHeight,
+              transform: [{translateY: -eightyPercentHeight}],
+            }
+          : {
+              height: QUEUE_BUTTON_HEIGHT,
+              transform: [{translateY: -QUEUE_BUTTON_HEIGHT}],
+            },
+      ]}>
+      <Pressable
+        style={styles.queueIcon}
+        onPress={() => setShowQueue(prev => !prev)}>
+        <IconMaterial name="queue-music" size={32} color="#E6C72E" />
+      </Pressable>
+      {queue ? (
+        <FlatList
+          style={styles.list}
+          data={queue}
+          renderItem={({item, index}) => {
+            return (
+              <QueueItem
+                key={item.title}
+                item={item}
+                currentTrack={
+                  currentTrackIndex !== null && currentTrackIndex === index
+                }
+                onPress={() => playFromQueue(index)}
+              />
+            );
+          }}
+        />
+      ) : (
+        <ActivityIndicator style={styles.loading} size={96} />
+      )}
     </View>
   );
 };
