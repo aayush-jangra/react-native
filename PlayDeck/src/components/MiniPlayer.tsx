@@ -17,6 +17,7 @@ import TrackPlayer, {
 import IconEntypo from 'react-native-vector-icons/Entypo';
 import IconMaterial from 'react-native-vector-icons/MaterialIcons';
 import {MINIPLAYER_HEIGHT} from '../constants/styles';
+import {Gesture, GestureDetector} from 'react-native-gesture-handler';
 
 const styles = StyleSheet.create({
   container: {
@@ -36,6 +37,11 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 32,
     paddingHorizontal: 32,
+  },
+  controls: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
   },
 });
 
@@ -79,6 +85,11 @@ export const MiniPlayer = () => {
     }
   };
 
+  const tapGesture = Gesture.Tap()
+    .onStart(() => {})
+    .onEnd(() => {})
+    .shouldCancelWhenOutside(true);
+
   return (
     <View style={styles.container}>
       {currentTrack ? (
@@ -86,37 +97,41 @@ export const MiniPlayer = () => {
           <View style={styles.extend}>
             <QueueItem item={currentTrack} showDuration={false} />
           </View>
-          <TouchableOpacity onPress={prevButtonHandle}>
-            <IconEntypo
-              name="controller-jump-to-start"
-              size={40}
-              color="#E6C72E"
-            />
-          </TouchableOpacity>
-          <TouchableOpacity onPress={togglePlay}>
-            {loading ? (
-              <ActivityIndicator size={64} color="#E6C72E" />
-            ) : (
-              <>
-                {isPlaying ? (
-                  <IconMaterial name="pause" size={64} color="#E6C72E" />
+          <GestureDetector gesture={tapGesture}>
+            <View style={styles.controls}>
+              <TouchableOpacity onPress={prevButtonHandle}>
+                <IconEntypo
+                  name="controller-jump-to-start"
+                  size={40}
+                  color="#E6C72E"
+                />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={togglePlay}>
+                {loading ? (
+                  <ActivityIndicator size={64} color="#E6C72E" />
                 ) : (
-                  <IconEntypo
-                    name="controller-play"
-                    size={64}
-                    color="#E6C72E"
-                  />
+                  <>
+                    {isPlaying ? (
+                      <IconMaterial name="pause" size={64} color="#E6C72E" />
+                    ) : (
+                      <IconEntypo
+                        name="controller-play"
+                        size={64}
+                        color="#E6C72E"
+                      />
+                    )}
+                  </>
                 )}
-              </>
-            )}
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => {
-              TrackPlayer.skipToNext();
-              TrackPlayer.play();
-            }}>
-            <IconEntypo name="controller-next" size={40} color="#E6C72E" />
-          </TouchableOpacity>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  TrackPlayer.skipToNext();
+                  TrackPlayer.play();
+                }}>
+                <IconEntypo name="controller-next" size={40} color="#E6C72E" />
+              </TouchableOpacity>
+            </View>
+          </GestureDetector>
         </>
       ) : (
         <Text style={styles.noSongText}>Nothing is playing</Text>
