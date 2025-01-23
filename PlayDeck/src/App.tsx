@@ -3,16 +3,19 @@ import {SafeAreaView, StyleSheet, ActivityIndicator, View} from 'react-native';
 import {useAppState} from './Providers/AppProvider';
 import {PlayerPage} from './pages/PlayerPage';
 import {LibraryPage} from './pages/LibraryPage';
-import {MiniPlayer} from './components/MiniPlayer';
+import {MINIPLAYER_HEIGHT} from './constants/styles';
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  playerSpace: {
+    height: MINIPLAYER_HEIGHT,
+  },
 });
 
 const App = () => {
-  const {isPlayerSetup, showPlayer} = useAppState();
+  const {isPlayerSetup} = useAppState();
 
   if (!isPlayerSetup) {
     return (
@@ -24,14 +27,11 @@ const App = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      {showPlayer ? (
+      <View style={styles.container}>
+        <LibraryPage />
+        <View style={styles.playerSpace} />
         <PlayerPage />
-      ) : (
-        <View style={styles.container}>
-          <LibraryPage />
-          <MiniPlayer />
-        </View>
-      )}
+      </View>
     </SafeAreaView>
   );
 };

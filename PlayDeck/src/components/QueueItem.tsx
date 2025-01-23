@@ -1,7 +1,6 @@
 import React from 'react';
 import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {formatTime} from '../utils/formatTime';
-import {DefaultArtwork} from './DefaultArtwork';
 import {Track} from 'react-native-track-player';
 
 interface QueueItemProps {
@@ -57,7 +56,10 @@ export const QueueItem = ({
       {item.artwork ? (
         <Image source={{uri: item.artwork}} style={styles.artwork} />
       ) : (
-        <DefaultArtwork size="small" />
+        <Image
+          source={require('../assets/images/noMusic.jpg')}
+          style={styles.artwork}
+        />
       )}
       <View style={styles.details}>
         <Text numberOfLines={1} style={styles.text}>

@@ -1,7 +1,6 @@
 import React from 'react';
 import {View, StyleSheet, Text, Image} from 'react-native';
 import {useActiveTrack} from 'react-native-track-player';
-import {DefaultArtwork} from './DefaultArtwork';
 
 const styles = StyleSheet.create({
   songName: {
@@ -24,8 +23,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   artwork: {
-    height: 'auto',
-    width: '80%',
+    height: '50%',
+    width: 'auto',
     aspectRatio: 1,
     borderRadius: 16,
     elevation: 10,
@@ -55,7 +54,10 @@ export const SongInfo = () => {
       {track.artwork ? (
         <Image source={{uri: track.artwork}} style={styles.artwork} />
       ) : (
-        <DefaultArtwork />
+        <Image
+          source={require('../assets/images/noMusic.jpg')}
+          style={styles.artwork}
+        />
       )}
       <View style={styles.songInfo}>
         <Text style={styles.songName}>{track.title}</Text>

@@ -16,12 +16,12 @@ import TrackPlayer, {
 } from 'react-native-track-player';
 import IconEntypo from 'react-native-vector-icons/Entypo';
 import IconMaterial from 'react-native-vector-icons/MaterialIcons';
-import {useAppState} from '../Providers/AppProvider';
+import {MINIPLAYER_HEIGHT} from '../constants/styles';
 
 const styles = StyleSheet.create({
   container: {
     width: '100%',
-    height: 64,
+    height: MINIPLAYER_HEIGHT,
     backgroundColor: '#000',
     display: 'flex',
     flexDirection: 'row',
@@ -34,7 +34,7 @@ const styles = StyleSheet.create({
   noSongText: {
     color: 'white',
     fontWeight: 'bold',
-    fontSize: 24,
+    fontSize: 32,
     paddingHorizontal: 32,
   },
 });
@@ -42,7 +42,6 @@ const styles = StyleSheet.create({
 export const MiniPlayer = () => {
   const {position} = useProgress(1000);
   const playerState = usePlaybackState();
-  const {setShowPlayer} = useAppState();
 
   const [currentTrack, setCurrentTrack] = useState<Track | undefined>();
 
@@ -85,30 +84,26 @@ export const MiniPlayer = () => {
       {currentTrack ? (
         <>
           <View style={styles.extend}>
-            <QueueItem
-              item={currentTrack}
-              showDuration={false}
-              onPress={() => setShowPlayer(true)}
-            />
+            <QueueItem item={currentTrack} showDuration={false} />
           </View>
           <TouchableOpacity onPress={prevButtonHandle}>
             <IconEntypo
               name="controller-jump-to-start"
-              size={24}
+              size={40}
               color="#E6C72E"
             />
           </TouchableOpacity>
           <TouchableOpacity onPress={togglePlay}>
             {loading ? (
-              <ActivityIndicator size={36} color="#E6C72E" />
+              <ActivityIndicator size={64} color="#E6C72E" />
             ) : (
               <>
                 {isPlaying ? (
-                  <IconMaterial name="pause" size={36} color="#E6C72E" />
+                  <IconMaterial name="pause" size={64} color="#E6C72E" />
                 ) : (
                   <IconEntypo
                     name="controller-play"
-                    size={36}
+                    size={64}
                     color="#E6C72E"
                   />
                 )}
@@ -120,7 +115,7 @@ export const MiniPlayer = () => {
               TrackPlayer.skipToNext();
               TrackPlayer.play();
             }}>
-            <IconEntypo name="controller-next" size={24} color="#E6C72E" />
+            <IconEntypo name="controller-next" size={40} color="#E6C72E" />
           </TouchableOpacity>
         </>
       ) : (

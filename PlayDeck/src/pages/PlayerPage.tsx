@@ -2,16 +2,29 @@ import React from 'react';
 import {Controls} from '../components/Controls';
 import {SongInfo} from '../components/SongInfo';
 import {QueueList} from '../components/QueueList';
-import {StyleSheet, TouchableOpacity, View} from 'react-native';
+import {Dimensions, StyleSheet, View} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import IconEntypo from 'react-native-vector-icons/Entypo';
-import {useAppState} from '../Providers/AppProvider';
+import {Gesture, GestureDetector} from 'react-native-gesture-handler';
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated';
+import {MiniPlayer} from '../components/MiniPlayer';
+import {MINIPLAYER_HEIGHT} from '../constants/styles';
 
 const styles = StyleSheet.create({
   queueSpace: {
     height: 64,
   },
-  linearGradient: {
+  container: {
+    flex: 1,
+    position: 'absolute',
+    top: '100%',
+    left: 0,
+    width: '100%',
+  },
+  extend: {
     flex: 1,
   },
   collapse: {
@@ -19,24 +32,76 @@ const styles = StyleSheet.create({
     right: 12,
     top: 12,
   },
+  queueContainer: {
+    position: 'relative',
+  },
 });
 
 export const PlayerPage = () => {
-  const {setShowPlayer} = useAppState();
+  const {height: screenHeight} = Dimensions.get('window');
+  const offset = useSharedValue(0);
+  const viewHeight = useSharedValue(MINIPLAYER_HEIGHT);
+
+  const panGesture = Gesture.Pan()
+    .onChange(event => {
+      offset.value = event.translationY;
+    })
+    .onFinalize(() => {
+      if (offset.value < -250) {
+        viewHeight.value = withTiming(screenHeight + MINIPLAYER_HEIGHT);
+      } else if (offset.value > 250) {
+        viewHeight.value = withTiming(MINIPLAYER_HEIGHT);
+      }
+      offset.value = withTiming(0);
+    });
+
+  const panGestureInternal = Gesture.Pan()
+    .onChange(event => {
+      offset.value = event.translationY;
+    })
+    .onFinalize(() => {
+      if (offset.value < -250) {
+        viewHeight.value = withTiming(screenHeight + MINIPLAYER_HEIGHT);
+      } else if (offset.value > 250) {
+        viewHeight.value = withTiming(MINIPLAYER_HEIGHT);
+      }
+      offset.value = withTiming(0);
+    });
+
+  const animatedStyles = useAnimatedStyle(() => ({
+    transform: [
+      {
+        translateY: Math.min(
+          -MINIPLAYER_HEIGHT,
+          Math.max(offset.value - viewHeight.value, -screenHeight - 64),
+        ),
+      },
+    ],
+    height: Math.max(
+      MINIPLAYER_HEIGHT,
+      Math.min(viewHeight.value - offset.value, screenHeight + 64),
+    ),
+  }));
 
   return (
-    <LinearGradient
-      colors={['#BCFEFF', '#08BF96', '#028C65', '#00593B', '#002617']}
-      style={styles.linearGradient}>
-      <TouchableOpacity
-        style={styles.collapse}
-        onPress={() => setShowPlayer(false)}>
-        <IconEntypo name="chevron-down" size={40} color="#563900" />
-      </TouchableOpacity>
-      <SongInfo />
-      <Controls />
-      <View style={styles.queueSpace} />
-      <QueueList />
-    </LinearGradient>
+    <Animated.View style={[styles.container, animatedStyles]}>
+      <GestureDetector gesture={panGesture}>
+        <MiniPlayer />
+      </GestureDetector>
+      <LinearGradient
+        colors={['#BCFEFF', '#08BF96', '#028C65', '#00593B', '#002617']}
+        style={styles.extend}>
+        <GestureDetector gesture={panGestureInternal}>
+          <View style={styles.extend}>
+            <SongInfo />
+          </View>
+        </GestureDetector>
+        <Controls />
+        <View style={styles.queueSpace} />
+        <View>
+          <QueueList />
+        </View>
+      </LinearGradient>
+    </Animated.View>
   );
 };

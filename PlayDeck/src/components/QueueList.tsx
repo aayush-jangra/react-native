@@ -1,11 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {
-  View,
-  StyleSheet,
-  ActivityIndicator,
-  FlatList,
-  Dimensions,
-} from 'react-native';
+import {View, StyleSheet, FlatList, Dimensions, Text} from 'react-native';
 import TrackPlayer, {Event} from 'react-native-track-player';
 import IconMaterial from 'react-native-vector-icons/MaterialIcons';
 import {QueueItem} from './QueueItem';
@@ -16,8 +10,6 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import {Gesture, GestureDetector} from 'react-native-gesture-handler';
-
-const QUEUE_BUTTON_HEIGHT = 64;
 
 const styles = StyleSheet.create({
   container: {
@@ -48,11 +40,23 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   queueIcon: {
-    height: QUEUE_BUTTON_HEIGHT,
+    height: 64,
     width: '100%',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  emptyQueue: {
+    flex: 1,
+    width: '100%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  emptyQueueText: {
+    fontSize: 32,
+    fontWeight: 'bold',
+    color: 'white',
   },
 });
 
@@ -153,7 +157,10 @@ export const QueueList = () => {
           }}
         />
       ) : (
-        <ActivityIndicator style={styles.loading} size={96} />
+        <View style={styles.emptyQueue}>
+          <IconMaterial name="music-off" size={128} color="#E82315" />
+          <Text style={styles.emptyQueueText}>Nothing is playing</Text>
+        </View>
       )}
     </Animated.View>
   );
