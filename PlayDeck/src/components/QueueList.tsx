@@ -4,13 +4,18 @@ import {
   StyleSheet,
   ActivityIndicator,
   FlatList,
-  Pressable,
   Dimensions,
 } from 'react-native';
 import TrackPlayer, {Event} from 'react-native-track-player';
 import IconMaterial from 'react-native-vector-icons/MaterialIcons';
 import {QueueItem} from './QueueItem';
 import {useAppState} from '../Providers/AppProvider';
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated';
+import {Gesture, GestureDetector} from 'react-native-gesture-handler';
 
 const QUEUE_BUTTON_HEIGHT = 64;
 
@@ -56,7 +61,6 @@ export const QueueList = () => {
   const [currentTrackIndex, setCurrentTrackIndex] = useState<
     number | undefined
   >();
-  const [showQueue, setShowQueue] = useState(false);
   const {height: screenHeight} = Dimensions.get('window');
   const eightyPercentHeight = screenHeight * 0.8;
 
@@ -77,25 +81,60 @@ export const QueueList = () => {
     setCurrentTrackIndex(index);
   };
 
+  const offset = useSharedValue<number>(0);
+  const dragging = useSharedValue<boolean>(false);
+  const showQueue = useSharedValue<boolean>(false);
+
+  const panGesture = Gesture.Pan()
+    .onBegin(() => {
+      dragging.value = true;
+    })
+    .onChange(event => {
+      offset.value = showQueue.value
+        ? event.translationY - eightyPercentHeight
+        : event.translationY;
+    })
+    .onFinalize(() => {
+      if (offset.value < -eightyPercentHeight / 2) {
+        offset.value = withTiming(-eightyPercentHeight);
+        showQueue.value = true;
+      } else {
+        offset.value = withTiming(0);
+        showQueue.value = false;
+      }
+      dragging.value = false;
+    });
+
+  const tapGesture = Gesture.Tap()
+    .onBegin(() => {})
+    .onFinalize(() => {
+      if (!dragging.value) {
+        if (showQueue.value) {
+          offset.value = withTiming(0);
+          showQueue.value = false;
+        } else {
+          offset.value = withTiming(-eightyPercentHeight);
+          showQueue.value = true;
+        }
+      }
+    });
+
+  const composedGesture = Gesture.Simultaneous(panGesture, tapGesture);
+
+  const animatedStyles = useAnimatedStyle(() => ({
+    transform: [
+      {translateY: Math.max(Math.min(-64, offset.value), -eightyPercentHeight)},
+    ],
+    height: Math.min(Math.max(64, -offset.value), eightyPercentHeight),
+  }));
+
   return (
-    <View
-      style={[
-        styles.container,
-        showQueue
-          ? {
-              height: eightyPercentHeight,
-              transform: [{translateY: -eightyPercentHeight}],
-            }
-          : {
-              height: QUEUE_BUTTON_HEIGHT,
-              transform: [{translateY: -QUEUE_BUTTON_HEIGHT}],
-            },
-      ]}>
-      <Pressable
-        style={styles.queueIcon}
-        onPress={() => setShowQueue(prev => !prev)}>
-        <IconMaterial name="queue-music" size={32} color="#E6C72E" />
-      </Pressable>
+    <Animated.View style={[styles.container, animatedStyles]}>
+      <GestureDetector gesture={composedGesture}>
+        <View style={styles.queueIcon}>
+          <IconMaterial name="queue-music" size={32} color="#E6C72E" />
+        </View>
+      </GestureDetector>
       {queue ? (
         <FlatList
           style={styles.list}
@@ -116,6 +155,6 @@ export const QueueList = () => {
       ) : (
         <ActivityIndicator style={styles.loading} size={96} />
       )}
-    </View>
+    </Animated.View>
   );
 };
