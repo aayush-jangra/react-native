@@ -55,6 +55,14 @@ export const PlayerPage = () => {
       offset.value = withTiming(0);
     });
 
+  const tapGesture = Gesture.Tap().onEnd(() => {
+    if (viewHeight.value === MINIPLAYER_HEIGHT) {
+      viewHeight.value = withTiming(screenHeight + MINIPLAYER_HEIGHT);
+    }
+  });
+
+  const miniPlayerGesture = Gesture.Exclusive(panGesture, tapGesture);
+
   const panGestureInternal = Gesture.Pan()
     .onChange(event => {
       offset.value = event.translationY;
@@ -85,7 +93,7 @@ export const PlayerPage = () => {
 
   return (
     <Animated.View style={[styles.container, animatedStyles]}>
-      <GestureDetector gesture={panGesture}>
+      <GestureDetector gesture={miniPlayerGesture}>
         <MiniPlayer />
       </GestureDetector>
       <LinearGradient

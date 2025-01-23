@@ -10,6 +10,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import {Gesture, GestureDetector} from 'react-native-gesture-handler';
+import {QUEUE_TAB_HEIGHT} from '../constants/styles';
 
 const styles = StyleSheet.create({
   container: {
@@ -86,50 +87,46 @@ export const QueueList = () => {
   };
 
   const offset = useSharedValue<number>(0);
-  const dragging = useSharedValue<boolean>(false);
-  const showQueue = useSharedValue<boolean>(false);
+  const viewHeight = useSharedValue(QUEUE_TAB_HEIGHT);
 
   const panGesture = Gesture.Pan()
-    .onBegin(() => {
-      dragging.value = true;
-    })
     .onChange(event => {
-      offset.value = showQueue.value
-        ? event.translationY - eightyPercentHeight
-        : event.translationY;
+      offset.value = event.translationY;
     })
     .onFinalize(() => {
-      if (offset.value < -eightyPercentHeight / 2) {
-        offset.value = withTiming(-eightyPercentHeight);
-        showQueue.value = true;
-      } else {
-        offset.value = withTiming(0);
-        showQueue.value = false;
+      if (offset.value < -250) {
+        viewHeight.value = withTiming(eightyPercentHeight);
+      } else if (offset.value > 250) {
+        viewHeight.value = withTiming(QUEUE_TAB_HEIGHT);
       }
-      dragging.value = false;
+      offset.value = withTiming(0);
     });
 
   const tapGesture = Gesture.Tap()
     .onBegin(() => {})
-    .onFinalize(() => {
-      if (!dragging.value) {
-        if (showQueue.value) {
-          offset.value = withTiming(0);
-          showQueue.value = false;
-        } else {
-          offset.value = withTiming(-eightyPercentHeight);
-          showQueue.value = true;
-        }
+    .onEnd(() => {
+      if (viewHeight.value === eightyPercentHeight) {
+        viewHeight.value = withTiming(QUEUE_TAB_HEIGHT);
+      } else {
+        viewHeight.value = withTiming(eightyPercentHeight);
       }
     });
 
-  const composedGesture = Gesture.Simultaneous(panGesture, tapGesture);
+  const composedGesture = Gesture.Exclusive(panGesture, tapGesture);
 
   const animatedStyles = useAnimatedStyle(() => ({
     transform: [
-      {translateY: Math.max(Math.min(-64, offset.value), -eightyPercentHeight)},
+      {
+        translateY: Math.min(
+          -QUEUE_TAB_HEIGHT,
+          Math.max(offset.value - viewHeight.value, -eightyPercentHeight),
+        ),
+      },
     ],
-    height: Math.min(Math.max(64, -offset.value), eightyPercentHeight),
+    height: Math.max(
+      QUEUE_TAB_HEIGHT,
+      Math.min(viewHeight.value - offset.value, eightyPercentHeight),
+    ),
   }));
 
   return (
