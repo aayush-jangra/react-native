@@ -1,4 +1,8 @@
-import TrackPlayer, {Event} from 'react-native-track-player';
+import TrackPlayer, {
+  AppKilledPlaybackBehavior,
+  Capability,
+  Event,
+} from 'react-native-track-player';
 
 export const setupPlayer = async () => {
   let isSetup = false;
@@ -15,6 +19,32 @@ export const setupPlayer = async () => {
 };
 
 export const PlaybackService = async function () {
+  // Listeners
   TrackPlayer.addEventListener(Event.RemotePlay, () => TrackPlayer.play());
   TrackPlayer.addEventListener(Event.RemotePause, () => TrackPlayer.pause());
+  TrackPlayer.addEventListener(Event.RemoteNext, () =>
+    TrackPlayer.skipToNext(),
+  );
+  TrackPlayer.addEventListener(Event.RemotePrevious, () =>
+    TrackPlayer.skipToPrevious(),
+  );
+  TrackPlayer.addEventListener(Event.RemoteSeek, event =>
+    TrackPlayer.seekTo(event.position),
+  );
+
+  // Options
+  TrackPlayer.updateOptions({
+    android: {
+      appKilledPlaybackBehavior:
+        AppKilledPlaybackBehavior.StopPlaybackAndRemoveNotification,
+    },
+    capabilities: [
+      Capability.Play,
+      Capability.Pause,
+      Capability.SkipToNext,
+      Capability.SkipToPrevious,
+      Capability.SeekTo,
+    ],
+    compactCapabilities: [Capability.Play, Capability.Pause],
+  });
 };
