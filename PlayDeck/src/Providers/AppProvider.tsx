@@ -3,6 +3,7 @@ import {AppState} from '../schema/appState';
 import TrackPlayer, {Track} from 'react-native-track-player';
 import {setupPlayer} from '../services/PlaybackService';
 import {shuffleArray} from '../utils/shuffle';
+import {requestStoragePermission} from '../utils/requestPermissions';
 
 const AppContext = createContext<AppState | undefined>(undefined);
 
@@ -21,6 +22,7 @@ export const AppProvider = ({children}: {children: React.ReactNode}) => {
   };
 
   useEffect(() => {
+    requestStoragePermission();
     setupTrackPlayer();
   }, []);
 

@@ -55,6 +55,9 @@ const styles = StyleSheet.create({
   relativeView: {
     position: 'relative',
   },
+  paddingRight: {
+    paddingRight: 16,
+  },
   timer: {
     position: 'absolute',
     top: 0,
@@ -126,7 +129,7 @@ export const MiniPlayer = () => {
               {}
             </LinearGradient>
           </Animated.View>
-          <View style={styles.fill}>
+          <View style={[styles.fill, styles.paddingRight]}>
             <View style={styles.extend}>
               <QueueItem item={currentTrack} showDuration={false} />
             </View>

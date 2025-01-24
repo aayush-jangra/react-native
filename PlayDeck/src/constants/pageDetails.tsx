@@ -2,7 +2,7 @@ import React from 'react';
 import {HomePage} from '../pages/HomePage';
 import IconAnt from 'react-native-vector-icons/AntDesign';
 import IconMaterial from 'react-native-vector-icons/MaterialIcons';
-import {LibraryPage} from '../pages/LibraryPage';
+import {LibraryPage} from '../pages/Library/LibraryPage';
 
 export const HomePageDetails = {
   name: 'Home',

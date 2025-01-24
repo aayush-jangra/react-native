@@ -4,12 +4,12 @@ import {useActiveTrack} from 'react-native-track-player';
 
 const styles = StyleSheet.create({
   songName: {
-    fontSize: 40,
+    fontSize: 24,
     fontWeight: 'bold',
     color: '#FEFFF2',
   },
   songDetails: {
-    fontSize: 20,
+    fontSize: 12,
     fontWeight: '500',
     color: '#FEFFF2',
   },
@@ -60,7 +60,9 @@ export const SongInfo = () => {
         />
       )}
       <View style={styles.songInfo}>
-        <Text style={styles.songName}>{track.title}</Text>
+        <Text numberOfLines={1} style={styles.songName}>
+          {track.title}
+        </Text>
         {track.artist ? (
           <Text numberOfLines={1} style={styles.songDetails}>
             {track.artist}

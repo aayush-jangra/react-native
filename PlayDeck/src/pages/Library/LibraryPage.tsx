@@ -1,13 +1,15 @@
 import React from 'react';
 import {FlatList, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import {musicQueue} from '../constants/musicQueue';
-import {QueueItem} from '../components/QueueItem';
+import {musicQueue} from '../../constants/musicQueue';
+import {QueueItem} from '../../components/QueueItem';
 import LinearGradient from 'react-native-linear-gradient';
 import IconEntypo from 'react-native-vector-icons/Entypo';
 import IconMaterialCommunity from 'react-native-vector-icons/MaterialCommunityIcons';
-import {useAppState} from '../Providers/AppProvider';
+import {useAppState} from '../../Providers/AppProvider';
+import {useLoadSongsFromStorage} from '../../hooks/useReadStorage';
+import {LibraryPageFallback} from './LibraryPageFallback';
 
-const styles = StyleSheet.create({
+export const libraryPageStyles = StyleSheet.create({
   container: {flex: 1},
   headline: {
     color: '#222625',
@@ -47,26 +49,39 @@ const styles = StyleSheet.create({
 
 export const LibraryPage = () => {
   const {playNewPlaylist} = useAppState();
+  const {isLoading, songs, error} = useLoadSongsFromStorage();
+
+  if (isLoading) {
+    return <LibraryPageFallback type="loading" />;
+  }
+
+  if (error && error.type === 'Permission') {
+    return <LibraryPageFallback type="errorPermission" />;
+  }
+
+  if (error || !songs) {
+    return <LibraryPageFallback type="errorReading" />;
+  }
 
   return (
     <LinearGradient
       colors={['#FFF2F2', '#FB818F', '#DE1241', '#260012']}
       locations={[0.1, 0.2, 0.5, 1]}
-      style={styles.container}>
-      <Text style={styles.headline}>Songs</Text>
-      <View style={styles.controlsContainer}>
+      style={libraryPageStyles.container}>
+      <Text style={libraryPageStyles.headline}>Songs</Text>
+      <View style={libraryPageStyles.controlsContainer}>
         <TouchableOpacity
-          style={styles.iconButton}
+          style={libraryPageStyles.iconButton}
           onPress={() => playNewPlaylist({tracks: musicQueue})}>
           <IconEntypo
             name="controller-play"
             size={48}
             color="#6BE048"
-            style={styles.icon}
+            style={libraryPageStyles.icon}
           />
         </TouchableOpacity>
         <TouchableOpacity
-          style={styles.iconButton}
+          style={libraryPageStyles.iconButton}
           onPress={() => playNewPlaylist({tracks: musicQueue, shuffle: true})}>
           <IconMaterialCommunity
             name="shuffle-variant"
@@ -76,7 +91,7 @@ export const LibraryPage = () => {
         </TouchableOpacity>
       </View>
       <FlatList
-        style={styles.list}
+        style={libraryPageStyles.list}
         data={musicQueue}
         renderItem={({item, index}) => {
           return (
