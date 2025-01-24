@@ -16,6 +16,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     flex: 1,
+    maxWidth: '100%',
   },
   duration: {
     color: 'gray',
