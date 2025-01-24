@@ -11,7 +11,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import {MiniPlayer} from '../components/MiniPlayer';
-import {MINIPLAYER_HEIGHT} from '../constants/styles';
+import {MINIPLAYER_HEIGHT, TAB_NAVIGATOR_HEIGHT} from '../constants/styles';
 
 const styles = StyleSheet.create({
   queueSpace: {
@@ -41,6 +41,7 @@ export const PlayerPage = () => {
   const {height: screenHeight} = Dimensions.get('window');
   const offset = useSharedValue(0);
   const viewHeight = useSharedValue(MINIPLAYER_HEIGHT);
+  const showSlider = useSharedValue(false);
 
   const panGesture = Gesture.Pan()
     .onChange(event => {
@@ -49,8 +50,10 @@ export const PlayerPage = () => {
     .onFinalize(() => {
       if (offset.value < -250) {
         viewHeight.value = withTiming(screenHeight + MINIPLAYER_HEIGHT);
+        showSlider.value = true;
       } else if (offset.value > 250) {
         viewHeight.value = withTiming(MINIPLAYER_HEIGHT);
+        showSlider.value = false;
       }
       offset.value = withTiming(0);
     });
@@ -58,6 +61,7 @@ export const PlayerPage = () => {
   const tapGesture = Gesture.Tap().onEnd(() => {
     if (viewHeight.value === MINIPLAYER_HEIGHT) {
       viewHeight.value = withTiming(screenHeight + MINIPLAYER_HEIGHT);
+      showSlider.value = true;
     }
   });
 
@@ -70,8 +74,10 @@ export const PlayerPage = () => {
     .onFinalize(() => {
       if (offset.value < -250) {
         viewHeight.value = withTiming(screenHeight + MINIPLAYER_HEIGHT);
+        showSlider.value = true;
       } else if (offset.value > 250) {
         viewHeight.value = withTiming(MINIPLAYER_HEIGHT);
+        showSlider.value = false;
       }
       offset.value = withTiming(0);
     });
@@ -80,7 +86,7 @@ export const PlayerPage = () => {
     transform: [
       {
         translateY: Math.min(
-          -MINIPLAYER_HEIGHT,
+          -MINIPLAYER_HEIGHT - TAB_NAVIGATOR_HEIGHT,
           Math.max(offset.value - viewHeight.value, -screenHeight - 64),
         ),
       },
@@ -89,6 +95,15 @@ export const PlayerPage = () => {
       MINIPLAYER_HEIGHT,
       Math.min(viewHeight.value - offset.value, screenHeight + 64),
     ),
+  }));
+
+  const sliderAnimatedStyles = useAnimatedStyle(() => ({
+    transform: [
+      {
+        translateY: showSlider.value ? 0 : TAB_NAVIGATOR_HEIGHT,
+      },
+    ],
+    opacity: showSlider.value ? withTiming(1) : 0,
   }));
 
   return (
@@ -104,7 +119,7 @@ export const PlayerPage = () => {
             <SongInfo />
           </View>
         </GestureDetector>
-        <Controls />
+        <Controls sliderStyle={sliderAnimatedStyles} />
         <View style={styles.queueSpace} />
         <View>
           <QueueList />

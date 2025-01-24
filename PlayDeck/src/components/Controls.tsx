@@ -5,6 +5,7 @@ import {
   StyleSheet,
   ActivityIndicator,
   Text,
+  ViewStyle,
 } from 'react-native';
 import TrackPlayer, {
   RepeatMode,
@@ -18,6 +19,7 @@ import IconMaterialCommunity from 'react-native-vector-icons/MaterialCommunityIc
 import {formatTime} from '../utils/formatTime';
 import Slider from '@react-native-community/slider';
 import {useShuffleQueue} from '../hooks/useShuffleQueue';
+import Animated, {AnimatedStyle} from 'react-native-reanimated';
 
 const styles = StyleSheet.create({
   text: {
@@ -63,7 +65,11 @@ const styles = StyleSheet.create({
   },
 });
 
-export const Controls = () => {
+export const Controls = ({
+  sliderStyle,
+}: {
+  sliderStyle: AnimatedStyle<ViewStyle>;
+}) => {
   const playerState = usePlaybackState();
   const {position, duration} = useProgress(1000);
   const [repeatMode, setRepeatMode] = useState<RepeatMode | null>(null);
@@ -122,7 +128,7 @@ export const Controls = () => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.sliderContainer}>
+      <Animated.View style={[styles.sliderContainer, sliderStyle]}>
         <Text style={styles.text}>{formatTime(position)}</Text>
         <Slider
           style={styles.slider}
@@ -137,7 +143,7 @@ export const Controls = () => {
           disabled={loading}
         />
         <Text style={styles.text}>{formatTime(duration)}</Text>
-      </View>
+      </Animated.View>
       <View style={styles.controlsContainer}>
         <TouchableOpacity onPress={() => shuffleQueue()}>
           <IconMaterialCommunity
