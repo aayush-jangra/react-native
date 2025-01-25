@@ -5,6 +5,7 @@ import {setupPlayer} from '../services/PlaybackService';
 import {shuffleArray} from '../utils/shuffle';
 import {requestStoragePermission} from '../utils/requestPermissions';
 import {StorageService} from '../services/StorageService';
+import {AppWideEventListener} from '../components/AppWideEventListener';
 
 const AppContext = createContext<AppState | undefined>(undefined);
 
@@ -13,13 +14,18 @@ export const AppProvider = ({children}: {children: React.ReactNode}) => {
   const [startQueue, setStartQueue] = useState<Track[] | null>(null);
   const [isPlayerSetup, setIsPlayerSetup] = useState(false);
   const [queue, setQueue] = useState<Track[] | null>(null);
+  const [recentSongs, setRecentSongs] = useState<Track[]>([]);
 
   const setupTrackPlayer = async () => {
     const isSetup = await setupPlayer();
 
     if (isSetup) {
-      const storagePlayerData =
-        StorageService.getInstance().loadMiniPlayerData();
+      const storageRecentSongs = StorageService.getInstance().loadRecentSongs();
+      const storagePlayerData = StorageService.getInstance().loadPlayerData();
+
+      if (storageRecentSongs) {
+        setRecentSongs(storageRecentSongs);
+      }
 
       if (storagePlayerData) {
         const {
@@ -68,7 +74,7 @@ export const AppProvider = ({children}: {children: React.ReactNode}) => {
     await TrackPlayer.skip(skipIndex);
     setQueue(newPlaylist);
     await TrackPlayer.play();
-    StorageService.getInstance().setMiniPlayerData({
+    StorageService.getInstance().setPlayerData({
       playingTrackIndex: skipIndex,
       startQueue: [...tracks],
       playingQueue: [...newPlaylist],
@@ -88,8 +94,11 @@ export const AppProvider = ({children}: {children: React.ReactNode}) => {
         setStartQueue,
         isPlayerSetup,
         setIsPlayerSetup,
+        recentSongs,
+        setRecentSongs,
       }}>
       {children}
+      <AppWideEventListener />
     </AppContext.Provider>
   );
 };

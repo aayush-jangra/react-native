@@ -33,7 +33,7 @@ export const PlaybackService = async function () {
     TrackPlayer.seekTo(event.position),
   );
   TrackPlayer.addEventListener(Event.PlaybackActiveTrackChanged, ({index}) => {
-    StorageService.getInstance().setMiniPlayerData({playingTrackIndex: index});
+    StorageService.getInstance().setPlayerData({playingTrackIndex: index});
   });
 
   // Options

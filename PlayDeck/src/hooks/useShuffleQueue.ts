@@ -29,7 +29,7 @@ export const useShuffleQueue = () => {
       await TrackPlayer.skip(newTrackIndex, playingPosition);
       await TrackPlayer.play();
       setQueue(startQueue);
-      StorageService.getInstance().setMiniPlayerData({
+      StorageService.getInstance().setPlayerData({
         isShuffled: false,
         playingQueue: [...startQueue],
       });
@@ -49,7 +49,7 @@ export const useShuffleQueue = () => {
       await TrackPlayer.setQueue(queue);
       await TrackPlayer.skip(0, playingPosition);
       setQueue(queue);
-      StorageService.getInstance().setMiniPlayerData({
+      StorageService.getInstance().setPlayerData({
         isShuffled: true,
         playingQueue: [...queue],
       });

@@ -1,6 +1,5 @@
 import React from 'react';
 import {StyleSheet, Text, View, FlatList} from 'react-native';
-import {musicQueue} from '../constants/musicQueue';
 import {QueueItem} from './QueueItem';
 import {useAppState} from '../Providers/AppProvider';
 import {chunkArray} from '../utils/chunkArray';
@@ -41,10 +40,10 @@ const styles = StyleSheet.create({
 });
 
 export const RecentSongs = () => {
-  const {playNewPlaylist} = useAppState();
+  const {playNewPlaylist, recentSongs} = useAppState();
 
   const rowSize = 2;
-  const songs = chunkArray(musicQueue, rowSize);
+  const songs = chunkArray(recentSongs, rowSize);
 
   return (
     <View style={styles.container}>
@@ -65,22 +64,24 @@ export const RecentSongs = () => {
                 item={songOne}
                 onPress={() =>
                   playNewPlaylist({
-                    tracks: musicQueue,
+                    tracks: recentSongs,
                     skipIndex: index * rowSize,
                   })
                 }
               />
-              <QueueItem
-                showDuration={false}
-                key={songTwo.title}
-                item={songTwo}
-                onPress={() =>
-                  playNewPlaylist({
-                    tracks: musicQueue,
-                    skipIndex: index * rowSize + 1,
-                  })
-                }
-              />
+              {songTwo && (
+                <QueueItem
+                  showDuration={false}
+                  key={songTwo.title}
+                  item={songTwo}
+                  onPress={() =>
+                    playNewPlaylist({
+                      tracks: recentSongs,
+                      skipIndex: index * rowSize + 1,
+                    })
+                  }
+                />
+              )}
             </View>
           );
         }}

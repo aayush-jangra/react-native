@@ -1,8 +1,10 @@
 import {MMKV} from 'react-native-mmkv';
 import {PlayerData} from '../schema/storage';
+import {Track} from 'react-native-track-player';
 
 export enum StorageKeys {
   PLAYER_DATA = 'playerData',
+  RECENT_SONGS = 'recentSongs',
 }
 
 export class StorageService {
@@ -20,7 +22,7 @@ export class StorageService {
     return StorageService.instance;
   }
 
-  public loadMiniPlayerData() {
+  public loadPlayerData() {
     const playerDataJson = this.storage.getString(StorageKeys.PLAYER_DATA);
     const playerData = playerDataJson
       ? (JSON.parse(playerDataJson) as PlayerData)
@@ -29,7 +31,7 @@ export class StorageService {
     return playerData;
   }
 
-  public setMiniPlayerData({
+  public setPlayerData({
     playingTrackIndex,
     startQueue,
     playingQueue,
@@ -53,9 +55,22 @@ export class StorageService {
       overrideData = {...overrideData, repeatMode};
     }
 
-    const existingData = this.loadMiniPlayerData();
+    const existingData = this.loadPlayerData();
     const newData: PlayerData = {...existingData, ...overrideData};
 
     this.storage.set(StorageKeys.PLAYER_DATA, JSON.stringify(newData));
+  }
+
+  public loadRecentSongs() {
+    const recentSongsJson = this.storage.getString(StorageKeys.RECENT_SONGS);
+    const recentSongs = recentSongsJson
+      ? (JSON.parse(recentSongsJson) as Track[])
+      : null;
+
+    return recentSongs;
+  }
+
+  public setRecentSongs(songs: Track[]) {
+    this.storage.set(StorageKeys.RECENT_SONGS, JSON.stringify(songs));
   }
 }

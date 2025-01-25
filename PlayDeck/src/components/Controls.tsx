@@ -116,7 +116,7 @@ export const Controls = ({
     }
 
     TrackPlayer.setRepeatMode(newRepeatMode);
-    StorageService.getInstance().setMiniPlayerData({repeatMode: newRepeatMode});
+    StorageService.getInstance().setPlayerData({repeatMode: newRepeatMode});
     setRepeatMode(newRepeatMode);
   };
 

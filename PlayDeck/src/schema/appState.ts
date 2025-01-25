@@ -10,6 +10,8 @@ export interface AppState {
   setStartQueue: Dispatch<SetStateAction<Track[] | null>>;
   queue: Track[] | null;
   setQueue: Dispatch<SetStateAction<Track[] | null>>;
+  recentSongs: Track[];
+  setRecentSongs: Dispatch<SetStateAction<Track[]>>;
   playNewPlaylist: ({
     tracks,
     shuffle,
