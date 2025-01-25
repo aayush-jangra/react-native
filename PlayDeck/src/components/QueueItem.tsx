@@ -2,6 +2,7 @@ import React from 'react';
 import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {formatTime} from '../utils/formatTime';
 import {Track} from 'react-native-track-player';
+import IconEntypo from 'react-native-vector-icons/Entypo';
 
 interface QueueItemProps {
   item: Track;
@@ -15,12 +16,12 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 16,
     fontWeight: 'bold',
-    flex: 1,
-    maxWidth: '100%',
   },
   duration: {
-    color: 'gray',
-    fontSize: 16,
+    color: '#18F2CE',
+    fontSize: 14,
+    fontWeight: '600',
+    fontStyle: 'italic',
   },
   queueItem: {
     display: 'flex',
@@ -28,6 +29,7 @@ const styles = StyleSheet.create({
     gap: 16,
     paddingVertical: 12,
     paddingHorizontal: 32,
+    alignItems: 'center',
   },
   selectedItem: {
     backgroundColor: '#563900',
@@ -40,6 +42,12 @@ const styles = StyleSheet.create({
   },
   details: {
     flex: 1,
+  },
+  secondaryInfo: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    gap: 4,
   },
 });
 
@@ -66,15 +74,20 @@ export const QueueItem = ({
         <Text numberOfLines={1} style={styles.text}>
           {item.title}
         </Text>
-        <Text numberOfLines={1} style={styles.text}>
-          {item.artist}
-        </Text>
+        <View style={styles.secondaryInfo}>
+          <Text numberOfLines={1} style={styles.text}>
+            {item.artist}
+          </Text>
+          {showDuration && (
+            <>
+              <IconEntypo name="dot-single" size={18} color={'white'} />
+              <Text style={styles.duration}>
+                {item.duration ? formatTime(item.duration) : '-- / --'}
+              </Text>
+            </>
+          )}
+        </View>
       </View>
-      {showDuration && (
-        <Text style={styles.duration}>
-          {item.duration ? formatTime(item.duration) : '-- / --'}
-        </Text>
-      )}
     </TouchableOpacity>
   );
 };

@@ -1,6 +1,5 @@
 import React from 'react';
 import {FlatList, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import {musicQueue} from '../../constants/musicQueue';
 import {QueueItem} from '../../components/QueueItem';
 import LinearGradient from 'react-native-linear-gradient';
 import IconEntypo from 'react-native-vector-icons/Entypo';
@@ -72,7 +71,7 @@ export const LibraryPage = () => {
       <View style={libraryPageStyles.controlsContainer}>
         <TouchableOpacity
           style={libraryPageStyles.iconButton}
-          onPress={() => playNewPlaylist({tracks: musicQueue})}>
+          onPress={() => playNewPlaylist({tracks: songs})}>
           <IconEntypo
             name="controller-play"
             size={48}
@@ -82,7 +81,7 @@ export const LibraryPage = () => {
         </TouchableOpacity>
         <TouchableOpacity
           style={libraryPageStyles.iconButton}
-          onPress={() => playNewPlaylist({tracks: musicQueue, shuffle: true})}>
+          onPress={() => playNewPlaylist({tracks: songs, shuffle: true})}>
           <IconMaterialCommunity
             name="shuffle-variant"
             size={36}
@@ -92,15 +91,13 @@ export const LibraryPage = () => {
       </View>
       <FlatList
         style={libraryPageStyles.list}
-        data={musicQueue}
+        data={songs}
         renderItem={({item, index}) => {
           return (
             <QueueItem
               key={item.title}
               item={item}
-              onPress={() =>
-                playNewPlaylist({tracks: musicQueue, skipIndex: index})
-              }
+              onPress={() => playNewPlaylist({tracks: songs, skipIndex: index})}
             />
           );
         }}

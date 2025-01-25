@@ -1,13 +1,12 @@
 import {Track} from 'react-native-track-player';
-import RNFS from 'react-native-fs';
+import {Song} from 'react-native-get-music-files/lib/typescript/src/NativeTurboSongs';
 
-export const convertMusicFilesIntoTracks = (
-  musicFiles: RNFS.ReadDirItem[],
-): Track[] => {
+export const convertMusicFilesIntoTracks = (musicFiles: Song[]): Track[] => {
   const songs = musicFiles.map(file => {
     const track: Track = {
-      url: file.path,
-      title: file.name,
+      ...file,
+      artwork: file.cover,
+      duration: file.duration / 1000,
     };
 
     return track;
