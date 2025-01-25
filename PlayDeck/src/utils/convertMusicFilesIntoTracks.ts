@@ -5,7 +5,7 @@ export const convertMusicFilesIntoTracks = (musicFiles: Song[]): Track[] => {
   const songs = musicFiles.map(file => {
     const track: Track = {
       ...file,
-      artwork: file.cover,
+      artwork: file.cover ? file.cover : undefined,
       duration: file.duration / 1000,
     };
 

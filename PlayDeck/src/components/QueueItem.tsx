@@ -6,7 +6,6 @@ import IconEntypo from 'react-native-vector-icons/Entypo';
 
 interface QueueItemProps {
   item: Track;
-  currentTrack?: boolean;
   onPress?: () => void;
   showDuration?: boolean;
 }
@@ -28,11 +27,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 16,
     paddingVertical: 12,
-    paddingHorizontal: 32,
     alignItems: 'center',
-  },
-  selectedItem: {
-    backgroundColor: '#563900',
   },
   artwork: {
     height: 48,
@@ -43,24 +38,17 @@ const styles = StyleSheet.create({
   details: {
     flex: 1,
   },
-  secondaryInfo: {
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'flex-end',
-    gap: 4,
-  },
 });
 
 export const QueueItem = ({
   item,
-  currentTrack = false,
   showDuration = true,
   onPress,
 }: QueueItemProps) => {
   return (
     <TouchableOpacity
       key={item.title}
-      style={[styles.queueItem, currentTrack ? styles.selectedItem : {}]}
+      style={styles.queueItem}
       onPress={onPress}>
       {item.artwork ? (
         <Image source={{uri: item.artwork}} style={styles.artwork} />
@@ -74,10 +62,8 @@ export const QueueItem = ({
         <Text numberOfLines={1} style={styles.text}>
           {item.title}
         </Text>
-        <View style={styles.secondaryInfo}>
-          <Text numberOfLines={1} style={styles.text}>
-            {item.artist}
-          </Text>
+        <Text numberOfLines={1} style={styles.text}>
+          {item.artist}
           {showDuration && (
             <>
               <IconEntypo name="dot-single" size={18} color={'white'} />
@@ -86,7 +72,7 @@ export const QueueItem = ({
               </Text>
             </>
           )}
-        </View>
+        </Text>
       </View>
     </TouchableOpacity>
   );

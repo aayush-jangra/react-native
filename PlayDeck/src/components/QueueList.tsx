@@ -59,6 +59,12 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: 'white',
   },
+  selectedItem: {
+    backgroundColor: '#563900',
+  },
+  queueContainer: {
+    paddingHorizontal: 32,
+  },
 });
 
 export const QueueList = () => {
@@ -141,15 +147,21 @@ export const QueueList = () => {
           style={styles.list}
           data={queue}
           renderItem={({item, index}) => {
+            const currentTrack =
+              currentTrackIndex !== null && currentTrackIndex === index;
+
             return (
-              <QueueItem
-                key={item.title}
-                item={item}
-                currentTrack={
-                  currentTrackIndex !== null && currentTrackIndex === index
-                }
-                onPress={() => playFromQueue(index)}
-              />
+              <View
+                style={[
+                  styles.queueContainer,
+                  currentTrack ? styles.selectedItem : {},
+                ]}>
+                <QueueItem
+                  key={item.title}
+                  item={item}
+                  onPress={() => playFromQueue(index)}
+                />
+              </View>
             );
           }}
         />

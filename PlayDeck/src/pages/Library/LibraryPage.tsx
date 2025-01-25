@@ -7,6 +7,7 @@ import IconMaterialCommunity from 'react-native-vector-icons/MaterialCommunityIc
 import {useAppState} from '../../Providers/AppProvider';
 import {useLoadSongsFromStorage} from '../../hooks/useReadStorage';
 import {LibraryPageFallback} from './LibraryPageFallback';
+import {musicQueue} from '../../constants/musicQueue';
 
 export const libraryPageStyles = StyleSheet.create({
   container: {flex: 1},
@@ -22,6 +23,7 @@ export const libraryPageStyles = StyleSheet.create({
     display: 'flex',
     borderTopLeftRadius: 32,
     borderTopRightRadius: 32,
+    paddingHorizontal: 32,
   },
   controlsContainer: {
     display: 'flex',
@@ -61,6 +63,8 @@ export const LibraryPage = () => {
   if (error || !songs) {
     return <LibraryPageFallback type="errorReading" />;
   }
+
+  songs.push(...musicQueue);
 
   return (
     <LinearGradient

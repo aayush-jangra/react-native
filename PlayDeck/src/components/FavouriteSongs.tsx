@@ -36,6 +36,7 @@ const styles = StyleSheet.create({
     height: '100%',
     display: 'flex',
     alignItems: 'center',
+    paddingLeft: 12,
   },
 });
 
