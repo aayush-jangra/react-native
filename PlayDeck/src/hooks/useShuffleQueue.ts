@@ -1,6 +1,7 @@
 import TrackPlayer, {Track, useProgress} from 'react-native-track-player';
 import {shuffleArray} from '../utils/shuffle';
 import {useAppState} from '../Providers/AppProvider';
+import {StorageService} from '../services/StorageService';
 
 export const useShuffleQueue = () => {
   const {position} = useProgress(1000);
@@ -28,6 +29,10 @@ export const useShuffleQueue = () => {
       await TrackPlayer.skip(newTrackIndex, playingPosition);
       await TrackPlayer.play();
       setQueue(startQueue);
+      StorageService.getInstance().setMiniPlayerData({
+        isShuffled: false,
+        playingQueue: [...startQueue],
+      });
     }
     // Shuffle the queue
     else {
@@ -41,10 +46,13 @@ export const useShuffleQueue = () => {
         queue.unshift(startTrack);
       }
       setIsShuffled(true);
-
       await TrackPlayer.setQueue(queue);
       await TrackPlayer.skip(0, playingPosition);
       setQueue(queue);
+      StorageService.getInstance().setMiniPlayerData({
+        isShuffled: true,
+        playingQueue: [...queue],
+      });
     }
   };
 

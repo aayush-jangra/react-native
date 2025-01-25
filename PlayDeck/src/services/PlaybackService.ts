@@ -3,6 +3,7 @@ import TrackPlayer, {
   Capability,
   Event,
 } from 'react-native-track-player';
+import {StorageService} from './StorageService';
 
 export const setupPlayer = async () => {
   let isSetup = false;
@@ -31,6 +32,9 @@ export const PlaybackService = async function () {
   TrackPlayer.addEventListener(Event.RemoteSeek, event =>
     TrackPlayer.seekTo(event.position),
   );
+  TrackPlayer.addEventListener(Event.PlaybackActiveTrackChanged, ({index}) => {
+    StorageService.getInstance().setMiniPlayerData({playingTrackIndex: index});
+  });
 
   // Options
   TrackPlayer.updateOptions({

@@ -15,7 +15,6 @@ import IconMaterialCommunity from 'react-native-vector-icons/MaterialCommunityIc
 import {useAppState} from '../../Providers/AppProvider';
 import {useLoadSongsFromStorage} from '../../hooks/useReadStorage';
 import {LibraryPageFallback} from './LibraryPageFallback';
-import {musicQueue} from '../../constants/musicQueue';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -105,7 +104,7 @@ export const libraryPageStyles = StyleSheet.create({
 
 export const LibraryPage = () => {
   const {playNewPlaylist} = useAppState();
-  const {isLoading, songs: localSongs, error} = useLoadSongsFromStorage();
+  const {isLoading, songs, error} = useLoadSongsFromStorage();
   const scrollOffset = useSharedValue(0);
   const {width: windowWidth} = Dimensions.get('window');
 
@@ -152,11 +151,9 @@ export const LibraryPage = () => {
     return <LibraryPageFallback type="errorPermission" />;
   }
 
-  if (error || !localSongs) {
+  if (error || !songs) {
     return <LibraryPageFallback type="errorReading" />;
   }
-
-  const songs = [...localSongs, ...musicQueue];
 
   return (
     <LinearGradient

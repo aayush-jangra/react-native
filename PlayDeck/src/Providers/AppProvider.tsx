@@ -1,9 +1,10 @@
 import React, {createContext, useContext, useEffect, useState} from 'react';
 import {AppState} from '../schema/appState';
-import TrackPlayer, {Track} from 'react-native-track-player';
+import TrackPlayer, {RepeatMode, Track} from 'react-native-track-player';
 import {setupPlayer} from '../services/PlaybackService';
 import {shuffleArray} from '../utils/shuffle';
 import {requestStoragePermission} from '../utils/requestPermissions';
+import {StorageService} from '../services/StorageService';
 
 const AppContext = createContext<AppState | undefined>(undefined);
 
@@ -17,6 +18,27 @@ export const AppProvider = ({children}: {children: React.ReactNode}) => {
     const isSetup = await setupPlayer();
 
     if (isSetup) {
+      const storagePlayerData =
+        StorageService.getInstance().loadMiniPlayerData();
+
+      if (storagePlayerData) {
+        const {
+          playingQueue,
+          playingTrackIndex,
+          startQueue: startQueueStorage,
+          isShuffled: isShuffledStorage,
+          repeatMode,
+        } = storagePlayerData;
+        setQueue(playingQueue ?? null);
+        setStartQueue(startQueueStorage ?? null);
+        if (playingQueue) {
+          await TrackPlayer.reset();
+          await TrackPlayer.add(playingQueue);
+        }
+        setIsShuffled(isShuffledStorage ?? false);
+        await TrackPlayer.setRepeatMode(repeatMode ?? RepeatMode.Off);
+        await TrackPlayer.skip(playingTrackIndex ?? 0);
+      }
       setIsPlayerSetup(true);
     }
   };
@@ -46,6 +68,12 @@ export const AppProvider = ({children}: {children: React.ReactNode}) => {
     await TrackPlayer.skip(skipIndex);
     setQueue(newPlaylist);
     await TrackPlayer.play();
+    StorageService.getInstance().setMiniPlayerData({
+      playingTrackIndex: skipIndex,
+      startQueue: [...tracks],
+      playingQueue: [...newPlaylist],
+      isShuffled: shuffle,
+    });
   };
 
   return (

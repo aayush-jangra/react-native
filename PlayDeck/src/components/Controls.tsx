@@ -20,6 +20,7 @@ import {formatTime} from '../utils/formatTime';
 import Slider from '@react-native-community/slider';
 import {useShuffleQueue} from '../hooks/useShuffleQueue';
 import Animated, {AnimatedStyle} from 'react-native-reanimated';
+import {StorageService} from '../services/StorageService';
 
 const styles = StyleSheet.create({
   text: {
@@ -106,24 +107,17 @@ export const Controls = ({
   };
 
   const changeRepeatMode = async () => {
-    switch (repeatMode) {
-      case RepeatMode.Off:
-        await TrackPlayer.setRepeatMode(RepeatMode.Queue);
-        setRepeatMode(RepeatMode.Queue);
-        break;
-      case RepeatMode.Queue:
-        TrackPlayer.setRepeatMode(RepeatMode.Track);
-        setRepeatMode(RepeatMode.Track);
-        break;
-      case RepeatMode.Track:
-        TrackPlayer.setRepeatMode(RepeatMode.Off);
-        setRepeatMode(RepeatMode.Off);
-        break;
-      default:
-        TrackPlayer.setRepeatMode(RepeatMode.Off);
-        setRepeatMode(RepeatMode.Off);
-        break;
+    let newRepeatMode = RepeatMode.Off;
+
+    if (repeatMode === RepeatMode.Off) {
+      newRepeatMode = RepeatMode.Queue;
+    } else if (repeatMode === RepeatMode.Queue) {
+      newRepeatMode = RepeatMode.Track;
     }
+
+    TrackPlayer.setRepeatMode(newRepeatMode);
+    StorageService.getInstance().setMiniPlayerData({repeatMode: newRepeatMode});
+    setRepeatMode(newRepeatMode);
   };
 
   return (
