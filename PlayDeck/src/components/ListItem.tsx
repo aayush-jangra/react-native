@@ -1,13 +1,18 @@
 import React from 'react';
 import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {formatTime} from '../utils/formatTime';
-import {Track} from 'react-native-track-player';
 import IconEntypo from 'react-native-vector-icons/Entypo';
 
-interface QueueItemProps {
-  item: Track;
+interface ListItemProps {
+  item: {
+    title?: string;
+    artwork?: string;
+    subtitle?: string;
+    duration?: number;
+  };
   onPress?: () => void;
   showDuration?: boolean;
+  defaultArtwork?: 'song' | 'playlist';
 }
 
 const styles = StyleSheet.create({
@@ -22,7 +27,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     fontStyle: 'italic',
   },
-  queueItem: {
+  listItem: {
     display: 'flex',
     flexDirection: 'row',
     gap: 16,
@@ -40,21 +45,23 @@ const styles = StyleSheet.create({
   },
 });
 
-export const QueueItem = ({
+export const ListItem = ({
   item,
   showDuration = true,
   onPress,
-}: QueueItemProps) => {
+  defaultArtwork = 'song',
+}: ListItemProps) => {
   return (
-    <TouchableOpacity
-      key={item.title}
-      style={styles.queueItem}
-      onPress={onPress}>
+    <TouchableOpacity style={styles.listItem} onPress={onPress}>
       {item.artwork ? (
         <Image source={{uri: item.artwork}} style={styles.artwork} />
       ) : (
         <Image
-          source={require('../assets/images/noMusic.jpg')}
+          source={
+            defaultArtwork === 'song'
+              ? require('../assets/images/noMusic.jpg')
+              : require('../assets/images/playlist.png')
+          }
           style={styles.artwork}
         />
       )}
@@ -63,12 +70,14 @@ export const QueueItem = ({
           {item.title}
         </Text>
         <Text numberOfLines={1} style={styles.text}>
-          {item.artist}
+          {item.subtitle}
           {showDuration && (
             <>
               <IconEntypo name="dot-single" size={18} color={'white'} />
               <Text style={styles.duration}>
-                {item.duration ? formatTime(item.duration) : '-- / --'}
+                {item.duration !== undefined
+                  ? formatTime(item.duration)
+                  : '-- / --'}
               </Text>
             </>
           )}

@@ -7,3 +7,10 @@ export interface PlayerData {
   isShuffled?: boolean;
   repeatMode?: RepeatMode;
 }
+
+export interface PlaylistData {
+  name: string;
+  numberOfTracks: number;
+  durationOfPlaylist: number;
+  tracks: Track[];
+}

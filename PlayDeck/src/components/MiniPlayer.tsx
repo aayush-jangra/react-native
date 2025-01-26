@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {QueueItem} from './QueueItem';
+import {ListItem} from './ListItem';
 import TrackPlayer, {
   Event,
   State,
@@ -137,7 +137,14 @@ export const MiniPlayer = () => {
               </Animated.View>
               <View style={[styles.fill, styles.padding]}>
                 <View style={styles.extend}>
-                  <QueueItem item={currentTrack} showDuration={false} />
+                  <ListItem
+                    item={{
+                      title: currentTrack.title,
+                      subtitle: currentTrack.artist,
+                      duration: currentTrack.duration,
+                    }}
+                    showDuration={false}
+                  />
                 </View>
                 <GestureDetector gesture={tapGesture}>
                   <View style={styles.controls}>

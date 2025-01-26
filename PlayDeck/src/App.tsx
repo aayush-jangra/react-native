@@ -3,7 +3,11 @@ import {SafeAreaView, ActivityIndicator, StatusBar} from 'react-native';
 import {useAppState} from './Providers/AppProvider';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {RootTabParamList} from './schema/routes';
-import {HomePageDetails, LibraryPageDetails} from './constants/pageDetails';
+import {
+  HomePageDetails,
+  LibraryPageDetails,
+  PlaylistPageDetails,
+} from './constants/pageDetails';
 import {MINIPLAYER_HEIGHT, TAB_NAVIGATOR_HEIGHT} from './constants/styles';
 import {PlayerPage} from './pages/PlayerPage';
 
@@ -39,7 +43,6 @@ const App = () => {
             alignItems: 'center',
             justifyContent: 'center',
           },
-          tabBarHideOnKeyboard: true,
           headerShown: false,
           sceneStyle: {
             marginBottom: MINIPLAYER_HEIGHT,
@@ -50,6 +53,13 @@ const App = () => {
           component={HomePageDetails.Page}
           options={{
             tabBarIcon: HomePageDetails.icon,
+          }}
+        />
+        <Tab.Screen
+          name="Playlists"
+          component={PlaylistPageDetails.Page}
+          options={{
+            tabBarIcon: PlaylistPageDetails.icon,
           }}
         />
         <Tab.Screen

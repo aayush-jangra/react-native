@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {QueueItem} from '../../components/QueueItem';
+import {ListItem} from '../../components/ListItem';
 import LinearGradient from 'react-native-linear-gradient';
 import IconEntypo from 'react-native-vector-icons/Entypo';
 import IconMaterialCommunity from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -196,9 +196,13 @@ export const LibraryPage = () => {
           data={songs}
           renderItem={({item, index}) => {
             return (
-              <QueueItem
+              <ListItem
                 key={item.url}
-                item={item}
+                item={{
+                  title: item.title,
+                  subtitle: item.artist,
+                  duration: item.duration,
+                }}
                 onPress={() =>
                   playNewPlaylist({tracks: songs, skipIndex: index})
                 }

@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {View, StyleSheet, FlatList, Dimensions, Text} from 'react-native';
 import TrackPlayer, {Event} from 'react-native-track-player';
 import IconMaterial from 'react-native-vector-icons/MaterialIcons';
-import {QueueItem} from './QueueItem';
+import {ListItem} from './ListItem';
 import {useAppState} from '../Providers/AppProvider';
 import Animated, {
   useAnimatedStyle,
@@ -156,9 +156,13 @@ export const QueueList = () => {
                   styles.queueContainer,
                   currentTrack ? styles.selectedItem : {},
                 ]}>
-                <QueueItem
+                <ListItem
                   key={item.url}
-                  item={item}
+                  item={{
+                    title: item.title,
+                    subtitle: item.artist,
+                    duration: item.duration,
+                  }}
                   onPress={() => playFromQueue(index)}
                 />
               </View>

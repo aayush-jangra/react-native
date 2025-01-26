@@ -1,6 +1,6 @@
 import React from 'react';
 import {StyleSheet, Text, View, FlatList} from 'react-native';
-import {QueueItem} from './QueueItem';
+import {ListItem} from './ListItem';
 import {useAppState} from '../Providers/AppProvider';
 import {chunkArray} from '../utils/chunkArray';
 
@@ -58,10 +58,14 @@ export const RecentSongs = () => {
           const [songOne, songTwo] = item;
           return (
             <View style={styles.songColumn}>
-              <QueueItem
+              <ListItem
                 showDuration={false}
                 key={songOne.url}
-                item={songOne}
+                item={{
+                  title: songOne.title,
+                  subtitle: songOne.artist,
+                  duration: songOne.duration,
+                }}
                 onPress={() =>
                   playNewPlaylist({
                     tracks: recentSongs,
@@ -70,10 +74,14 @@ export const RecentSongs = () => {
                 }
               />
               {songTwo && (
-                <QueueItem
+                <ListItem
                   showDuration={false}
                   key={songTwo.url}
-                  item={songTwo}
+                  item={{
+                    title: songTwo.title,
+                    subtitle: songTwo.artist,
+                    duration: songTwo.duration,
+                  }}
                   onPress={() =>
                     playNewPlaylist({
                       tracks: recentSongs,
