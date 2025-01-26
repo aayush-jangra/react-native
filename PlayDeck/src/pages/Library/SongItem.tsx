@@ -10,6 +10,7 @@ import {StorageService} from '../../services/StorageService';
 import {useNavigation} from '@react-navigation/native';
 import {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
 import {RootTabParamList} from '../../schema/routes';
+import Snackbar from 'react-native-snackbar';
 
 const styles = StyleSheet.create({
   container: {
@@ -59,6 +60,18 @@ export const SongItem = ({
     storage.addTrackToPlaylist(playlistName, song);
     setShowModal(false);
     loadPlaylistsFromStorage();
+
+    // Issue with react-native-snackbar requires a setTimeout
+    // https://www.npmjs.com/package/react-native-snackbar#troubleshooting
+    setTimeout(() => {
+      Snackbar.show({
+        text: 'Added song to ' + playlistName,
+        duration: Snackbar.LENGTH_LONG,
+        backgroundColor: 'white',
+        textColor: 'black',
+        marginBottom: 96,
+      });
+    }, 1000);
   };
 
   return (
