@@ -6,6 +6,7 @@ import {shuffleArray} from '../utils/shuffle';
 import {requestStoragePermission} from '../utils/requestPermissions';
 import {StorageService} from '../services/StorageService';
 import {AppWideEventListener} from '../components/AppWideEventListener';
+import {PlaylistData} from '../schema/storage';
 
 const AppContext = createContext<AppState | undefined>(undefined);
 
@@ -15,6 +16,7 @@ export const AppProvider = ({children}: {children: React.ReactNode}) => {
   const [isPlayerSetup, setIsPlayerSetup] = useState(false);
   const [queue, setQueue] = useState<Track[] | null>(null);
   const [recentSongs, setRecentSongs] = useState<Track[]>([]);
+  const [playlists, setPlaylists] = useState<PlaylistData[]>([]);
 
   const setupTrackPlayer = async () => {
     const isSetup = await setupPlayer();
@@ -49,9 +51,18 @@ export const AppProvider = ({children}: {children: React.ReactNode}) => {
     }
   };
 
+  const loadPlaylistsFromStorage = () => {
+    const storagePlaylists = StorageService.getInstance().loadPlaylists();
+
+    if (storagePlaylists) {
+      setPlaylists(storagePlaylists);
+    }
+  };
+
   useEffect(() => {
     requestStoragePermission();
     setupTrackPlayer();
+    loadPlaylistsFromStorage();
   }, []);
 
   const playNewPlaylist = async ({
@@ -96,6 +107,9 @@ export const AppProvider = ({children}: {children: React.ReactNode}) => {
         setIsPlayerSetup,
         recentSongs,
         setRecentSongs,
+        playlists,
+        setPlaylists,
+        loadPlaylistsFromStorage,
       }}>
       {children}
       <AppWideEventListener />

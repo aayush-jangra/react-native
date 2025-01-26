@@ -2,9 +2,10 @@ import React, {useState} from 'react';
 import {FlatList, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import IconMaterialCommunity from 'react-native-vector-icons/MaterialCommunityIcons';
-import {PlaylistData} from '../schema/storage';
 import {CreatePlaylistModal} from '../components/CreatePlaylistModal';
 import {ListItem} from '../components/ListItem';
+import {StorageService} from '../services/StorageService';
+import {useAppState} from '../Providers/AppProvider';
 
 const styles = StyleSheet.create({
   container: {flex: 1, display: 'flex'},
@@ -68,12 +69,18 @@ const styles = StyleSheet.create({
 });
 
 export const PlaylistPage = () => {
-  const [playlists, setPlaylists] = useState<PlaylistData[]>([]);
+  const {playlists, setPlaylists} = useAppState();
   const [showModal, setShowModal] = useState(false);
 
   const existingPlaylistNames = playlists.flatMap(playlist => playlist.name);
 
   const onCreate = (name: string) => {
+    StorageService.getInstance().addPlaylist({
+      name,
+      tracks: [],
+      numberOfTracks: 0,
+      durationOfPlaylist: 0,
+    });
     setPlaylists(prev => [
       ...prev,
       {name, tracks: [], numberOfTracks: 0, durationOfPlaylist: 0},

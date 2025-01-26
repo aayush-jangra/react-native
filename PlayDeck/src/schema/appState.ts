@@ -1,5 +1,6 @@
 import {Dispatch, SetStateAction} from 'react';
 import {Track} from 'react-native-track-player';
+import {PlaylistData} from './storage';
 
 export interface AppState {
   isShuffled: boolean;
@@ -12,6 +13,9 @@ export interface AppState {
   setQueue: Dispatch<SetStateAction<Track[] | null>>;
   recentSongs: Track[];
   setRecentSongs: Dispatch<SetStateAction<Track[]>>;
+  playlists: PlaylistData[];
+  setPlaylists: Dispatch<SetStateAction<PlaylistData[]>>;
+  loadPlaylistsFromStorage: () => void;
   playNewPlaylist: ({
     tracks,
     shuffle,

@@ -2,6 +2,7 @@ import React from 'react';
 import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {formatTime} from '../utils/formatTime';
 import IconEntypo from 'react-native-vector-icons/Entypo';
+import {ListItemMenu, ListMenuItem} from './ListItemMenu';
 
 interface ListItemProps {
   item: {
@@ -13,6 +14,7 @@ interface ListItemProps {
   onPress?: () => void;
   showDuration?: boolean;
   defaultArtwork?: 'song' | 'playlist';
+  menuItems?: ListMenuItem[];
 }
 
 const styles = StyleSheet.create({
@@ -50,6 +52,7 @@ export const ListItem = ({
   showDuration = true,
   onPress,
   defaultArtwork = 'song',
+  menuItems,
 }: ListItemProps) => {
   return (
     <TouchableOpacity style={styles.listItem} onPress={onPress}>
@@ -83,6 +86,7 @@ export const ListItem = ({
           )}
         </Text>
       </View>
+      {menuItems && <ListItemMenu menuItems={menuItems} />}
     </TouchableOpacity>
   );
 };

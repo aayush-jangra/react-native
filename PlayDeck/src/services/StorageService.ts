@@ -1,10 +1,11 @@
 import {MMKV} from 'react-native-mmkv';
-import {PlayerData} from '../schema/storage';
+import {PlayerData, PlaylistData} from '../schema/storage';
 import {Track} from 'react-native-track-player';
 
 export enum StorageKeys {
   PLAYER_DATA = 'playerData',
-  RECENT_SONGS = 'recentSongs',
+  RECENT_SONGS_DATA = 'recentSongsData',
+  PLAYLISTS_DATA = 'playlistsData',
 }
 
 export class StorageService {
@@ -62,7 +63,9 @@ export class StorageService {
   }
 
   public loadRecentSongs() {
-    const recentSongsJson = this.storage.getString(StorageKeys.RECENT_SONGS);
+    const recentSongsJson = this.storage.getString(
+      StorageKeys.RECENT_SONGS_DATA,
+    );
     const recentSongs = recentSongsJson
       ? (JSON.parse(recentSongsJson) as Track[])
       : null;
@@ -71,6 +74,43 @@ export class StorageService {
   }
 
   public setRecentSongs(songs: Track[]) {
-    this.storage.set(StorageKeys.RECENT_SONGS, JSON.stringify(songs));
+    this.storage.set(StorageKeys.RECENT_SONGS_DATA, JSON.stringify(songs));
+  }
+
+  public loadPlaylists() {
+    const playlistsJson = this.storage.getString(StorageKeys.PLAYLISTS_DATA);
+    const playlists = playlistsJson
+      ? (JSON.parse(playlistsJson) as PlaylistData[])
+      : null;
+
+    return playlists;
+  }
+
+  public addPlaylist(playlist: PlaylistData) {
+    const existingPlaylists = this.loadPlaylists();
+    const newData = existingPlaylists
+      ? [...existingPlaylists, playlist]
+      : [playlist];
+
+    this.storage.set(StorageKeys.PLAYLISTS_DATA, JSON.stringify(newData));
+  }
+
+  public addTrackToPlaylist(playlistName: string, track: Track) {
+    const existingPlaylists = this.loadPlaylists();
+    if (existingPlaylists) {
+      const newData = [...existingPlaylists];
+
+      const playlistToChange = newData.find(
+        playlist => playlist.name === playlistName,
+      );
+
+      if (playlistToChange) {
+        playlistToChange.tracks.push(track);
+        playlistToChange.numberOfTracks += 1;
+        playlistToChange.durationOfPlaylist += track.duration || 0;
+      }
+
+      this.storage.set(StorageKeys.PLAYLISTS_DATA, JSON.stringify(newData));
+    }
   }
 }

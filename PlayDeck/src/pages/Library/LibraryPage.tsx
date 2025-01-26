@@ -8,7 +8,6 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {ListItem} from '../../components/ListItem';
 import LinearGradient from 'react-native-linear-gradient';
 import IconEntypo from 'react-native-vector-icons/Entypo';
 import IconMaterialCommunity from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -19,6 +18,7 @@ import Animated, {
   useAnimatedStyle,
   useSharedValue,
 } from 'react-native-reanimated';
+import {SongItem} from './SongItem';
 
 const ABSOLUTE_BUTTON_WIDTH = 96;
 const ABSOLUTE_BUTTON_TRANSLATE_BUFFER = 96;
@@ -194,21 +194,9 @@ export const LibraryPage = () => {
           scrollEnabled={false}
           style={libraryPageStyles.list}
           data={songs}
-          renderItem={({item, index}) => {
-            return (
-              <ListItem
-                key={item.url}
-                item={{
-                  title: item.title,
-                  subtitle: item.artist,
-                  duration: item.duration,
-                }}
-                onPress={() =>
-                  playNewPlaylist({tracks: songs, skipIndex: index})
-                }
-              />
-            );
-          }}
+          renderItem={({item, index}) => (
+            <SongItem key={item.url} item={item} songs={songs} index={index} />
+          )}
         />
       </ScrollView>
       <Animated.View
