@@ -1,4 +1,8 @@
-import TrackPlayer, {Track, useProgress} from 'react-native-track-player';
+import TrackPlayer, {
+  State,
+  Track,
+  useProgress,
+} from 'react-native-track-player';
 import {shuffleArray} from '../utils/shuffle';
 import {useAppState} from '../Providers/AppProvider';
 import {StorageService} from '../services/StorageService';
@@ -9,10 +13,13 @@ export const useShuffleQueue = () => {
 
   const shuffleQueue = async () => {
     const playingPosition = position;
-    const [queue, playingIndex] = await Promise.all([
+    const [queue, playingIndex, playbackState] = await Promise.all([
       TrackPlayer.getQueue(),
       TrackPlayer.getActiveTrackIndex(),
+      TrackPlayer.getPlaybackState(),
     ]);
+
+    const previouslyPlaying = playbackState.state === State.Playing;
 
     // Already shuffled queue, now we want to unshuffle it
     if (isShuffled && startQueue) {
@@ -27,7 +34,6 @@ export const useShuffleQueue = () => {
       await TrackPlayer.add(startQueue);
       setIsShuffled(false);
       await TrackPlayer.skip(newTrackIndex, playingPosition);
-      await TrackPlayer.play();
       setQueue(startQueue);
       StorageService.getInstance().setPlayerData({
         isShuffled: false,
@@ -53,6 +59,12 @@ export const useShuffleQueue = () => {
         isShuffled: true,
         playingQueue: [...queue],
       });
+    }
+
+    if (previouslyPlaying) {
+      await TrackPlayer.play();
+    } else {
+      await TrackPlayer.pause();
     }
   };
 

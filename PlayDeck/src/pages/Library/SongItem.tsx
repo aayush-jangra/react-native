@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {ListItem} from '../../components/ListItem';
-import {Track} from 'react-native-track-player';
+import TrackPlayer, {Track} from 'react-native-track-player';
 import IconMaterialCommunity from 'react-native-vector-icons/MaterialCommunityIcons';
 import IconMaterial from 'react-native-vector-icons/MaterialIcons';
 import {useAppState} from '../../Providers/AppProvider';
@@ -49,29 +49,67 @@ export const SongItem = ({
   index: number;
   songs: Track[];
 }) => {
-  const {playNewPlaylist, loadPlaylistsFromStorage} = useAppState();
+  const {
+    playNewPlaylist,
+    loadPlaylistsFromStorage,
+    setQueue,
+    setIsShuffled,
+    setStartQueue,
+  } = useAppState();
   const [showModal, setShowModal] = useState(false);
   const {navigate} = useNavigation<BottomTabNavigationProp<RootTabParamList>>();
 
   const storage = StorageService.getInstance();
   const playlists = storage.loadPlaylists();
 
-  const onPlaylistPress = (playlistName: string) => {
-    storage.addTrackToPlaylist(playlistName, song);
-    setShowModal(false);
-    loadPlaylistsFromStorage();
-
+  const showSnackbar = (text: string) => {
     // Issue with react-native-snackbar requires a setTimeout
     // https://www.npmjs.com/package/react-native-snackbar#troubleshooting
     setTimeout(() => {
       Snackbar.show({
-        text: 'Added song to ' + playlistName,
+        text,
         duration: Snackbar.LENGTH_LONG,
         backgroundColor: 'white',
         textColor: 'black',
         marginBottom: 96,
       });
     }, 1000);
+  };
+
+  const onPlaylistPress = (playlistName: string) => {
+    storage.addTrackToPlaylist(playlistName, song);
+    setShowModal(false);
+    loadPlaylistsFromStorage();
+
+    showSnackbar('Added song to ' + playlistName);
+  };
+
+  const addToQueue = async (insertBeforeIndex?: number) => {
+    await TrackPlayer.add(song, insertBeforeIndex);
+    const newQueue = await TrackPlayer.getQueue();
+    setQueue([...newQueue]);
+    setStartQueue([...newQueue]);
+    setIsShuffled(false);
+    StorageService.getInstance().setPlayerData({
+      isShuffled: false,
+      playingQueue: [...newQueue],
+      startQueue: [...newQueue],
+    });
+  };
+
+  const playLastInQueue = async () => {
+    await addToQueue();
+    showSnackbar('Added song to queue');
+  };
+
+  const playNextInQueue = async () => {
+    const currentIndex = await TrackPlayer.getActiveTrackIndex();
+    if (currentIndex !== undefined) {
+      addToQueue(currentIndex + 1);
+      showSnackbar('Song will play next');
+    } else {
+      showSnackbar('Could not add song');
+    }
   };
 
   return (
@@ -102,14 +140,14 @@ export const SongItem = ({
               <IconMaterial name="queue-play-next" color={'white'} size={32} />
             ),
             text: 'Play next in queue',
-            onPress: () => {},
+            onPress: playNextInQueue,
           },
           {
             icon: (
               <IconMaterial name="add-to-queue" color={'white'} size={32} />
             ),
             text: 'Add to queue',
-            onPress: () => {},
+            onPress: playLastInQueue,
           },
         ]}
       />

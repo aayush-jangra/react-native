@@ -76,11 +76,11 @@ export const Controls = ({
   const [repeatMode, setRepeatMode] = useState<RepeatMode | null>(null);
   const {isShuffled, shuffleQueue} = useShuffleQueue();
 
-  const loading = playerState.state === undefined;
-  const isPlaying = !loading && playerState.state === State.Playing;
+  const isPlaying = playerState.state === State.Playing;
   const isPaused =
-    !loading &&
-    (playerState.state === State.Paused || playerState.state === State.Ready);
+    playerState.state === State.Paused || playerState.state === State.Ready;
+  const loading =
+    playerState.state === undefined || playerState.state === State.Loading;
 
   useEffect(() => {
     (async () => {
