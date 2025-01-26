@@ -60,7 +60,7 @@ export const RecentSongs = () => {
             <View style={styles.songColumn}>
               <QueueItem
                 showDuration={false}
-                key={songOne.title}
+                key={songOne.url}
                 item={songOne}
                 onPress={() =>
                   playNewPlaylist({
@@ -72,7 +72,7 @@ export const RecentSongs = () => {
               {songTwo && (
                 <QueueItem
                   showDuration={false}
-                  key={songTwo.title}
+                  key={songTwo.url}
                   item={songTwo}
                   onPress={() =>
                     playNewPlaylist({

@@ -197,7 +197,7 @@ export const LibraryPage = () => {
           renderItem={({item, index}) => {
             return (
               <QueueItem
-                key={item.title}
+                key={item.url}
                 item={item}
                 onPress={() =>
                   playNewPlaylist({tracks: songs, skipIndex: index})

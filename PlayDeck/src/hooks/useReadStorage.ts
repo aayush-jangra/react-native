@@ -3,6 +3,7 @@ import {check, PERMISSIONS} from 'react-native-permissions';
 import {Track} from 'react-native-track-player';
 import {convertMusicFilesIntoTracks} from '../utils/convertMusicFilesIntoTracks';
 import {getAll} from 'react-native-get-music-files';
+import {Platform} from 'react-native';
 
 export const useLoadSongsFromStorage = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -15,8 +16,10 @@ export const useLoadSongsFromStorage = () => {
   useEffect(() => {
     const fetchSongs = async () => {
       setIsLoading(true);
-      const readPermission = await check(PERMISSIONS.ANDROID.READ_MEDIA_AUDIO);
-
+      const readPermission =
+        Platform.OS === 'android' && Platform.Version >= 33
+          ? await check(PERMISSIONS.ANDROID.READ_MEDIA_AUDIO)
+          : await check(PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE);
       if (readPermission === 'granted') {
         try {
           const musicFiles = await getAll({

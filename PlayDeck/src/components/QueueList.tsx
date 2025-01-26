@@ -157,7 +157,7 @@ export const QueueList = () => {
                   currentTrack ? styles.selectedItem : {},
                 ]}>
                 <QueueItem
-                  key={item.title}
+                  key={item.url}
                   item={item}
                   onPress={() => playFromQueue(index)}
                 />
