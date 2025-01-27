@@ -1,6 +1,6 @@
 import React from 'react';
 import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import {formatTime} from '../utils/formatTime';
+import {formatTime, formatTimeInLetters} from '../utils/formatTime';
 import IconEntypo from 'react-native-vector-icons/Entypo';
 import {ListItemMenu, ListMenuItem} from './ListItemMenu';
 
@@ -15,6 +15,7 @@ interface ListItemProps {
   showDuration?: boolean;
   defaultArtwork?: 'song' | 'playlist';
   menuItems?: ListMenuItem[];
+  formatDurationInLetters?: boolean;
 }
 
 const styles = StyleSheet.create({
@@ -53,6 +54,7 @@ export const ListItem = ({
   onPress,
   defaultArtwork = 'song',
   menuItems,
+  formatDurationInLetters = false,
 }: ListItemProps) => {
   return (
     <TouchableOpacity style={styles.listItem} onPress={onPress}>
@@ -79,7 +81,9 @@ export const ListItem = ({
               <IconEntypo name="dot-single" size={18} color={'white'} />
               <Text style={styles.duration}>
                 {item.duration !== undefined
-                  ? formatTime(item.duration)
+                  ? formatDurationInLetters
+                    ? formatTimeInLetters(item.duration)
+                    : formatTime(item.duration)
                   : '-- / --'}
               </Text>
             </>

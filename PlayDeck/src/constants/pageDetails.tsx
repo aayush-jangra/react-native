@@ -4,7 +4,7 @@ import IconAnt from 'react-native-vector-icons/AntDesign';
 import IconMaterial from 'react-native-vector-icons/MaterialIcons';
 import IconMaterialCommunity from 'react-native-vector-icons/MaterialCommunityIcons';
 import {LibraryPage} from '../pages/Library/LibraryPage';
-import {PlaylistPage} from '../pages/PlaylistPage';
+import {PlaylistPage} from '../pages/Playlist/PlaylistPage';
 
 export const HomePageDetails = {
   name: 'Home',

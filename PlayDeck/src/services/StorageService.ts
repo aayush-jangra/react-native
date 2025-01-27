@@ -113,4 +113,25 @@ export class StorageService {
       this.storage.set(StorageKeys.PLAYLISTS_DATA, JSON.stringify(newData));
     }
   }
+
+  public removeTrackFromPlaylist(playlistName: string, track: Track) {
+    const existingPlaylists = this.loadPlaylists();
+    if (existingPlaylists) {
+      const newData = [...existingPlaylists];
+
+      const playlistToChange = newData.find(
+        playlist => playlist.name === playlistName,
+      );
+
+      if (playlistToChange) {
+        playlistToChange.tracks = playlistToChange.tracks.filter(
+          item => item.url !== track.url,
+        );
+        playlistToChange.numberOfTracks--;
+        playlistToChange.durationOfPlaylist -= track.duration || 0;
+      }
+
+      this.storage.set(StorageKeys.PLAYLISTS_DATA, JSON.stringify(newData));
+    }
+  }
 }

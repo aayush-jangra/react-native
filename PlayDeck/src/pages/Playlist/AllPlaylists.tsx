@@ -1,11 +1,13 @@
 import React, {useState} from 'react';
 import {FlatList, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import LinearGradient from 'react-native-linear-gradient';
 import IconMaterialCommunity from 'react-native-vector-icons/MaterialCommunityIcons';
-import {CreatePlaylistModal} from '../components/CreatePlaylistModal';
-import {ListItem} from '../components/ListItem';
-import {StorageService} from '../services/StorageService';
-import {useAppState} from '../Providers/AppProvider';
+import {CreatePlaylistModal} from '../../components/CreatePlaylistModal';
+import {ListItem} from '../../components/ListItem';
+import {StorageService} from '../../services/StorageService';
+import {useAppState} from '../../Providers/AppProvider';
+import {useNavigation} from '@react-navigation/native';
+import {PlaylistStackParamList} from '../../schema/routes';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
 const styles = StyleSheet.create({
   container: {flex: 1, display: 'flex'},
@@ -68,9 +70,11 @@ const styles = StyleSheet.create({
   },
 });
 
-export const PlaylistPage = () => {
+export const AllPlaylists = () => {
   const {playlists, setPlaylists} = useAppState();
   const [showModal, setShowModal] = useState(false);
+  const {navigate} =
+    useNavigation<NativeStackNavigationProp<PlaylistStackParamList>>();
 
   const existingPlaylistNames = playlists.flatMap(playlist => playlist.name);
 
@@ -89,10 +93,7 @@ export const PlaylistPage = () => {
   };
 
   return (
-    <LinearGradient
-      colors={['#FFF2F2', '#FB818F', '#DE1241', '#260012']}
-      locations={[0.1, 0.2, 0.5, 1]}
-      style={styles.container}>
+    <>
       <Text style={styles.headline}>Playlists</Text>
       <View style={styles.playlistContainer}>
         {playlists.length > 0 ? (
@@ -109,6 +110,8 @@ export const PlaylistPage = () => {
                       duration: item.durationOfPlaylist,
                     }}
                     defaultArtwork="playlist"
+                    onPress={() => navigate('SinglePlaylist', {...item})}
+                    formatDurationInLetters
                   />
                 );
               }}
@@ -147,6 +150,6 @@ export const PlaylistPage = () => {
           />
         )}
       </View>
-    </LinearGradient>
+    </>
   );
 };

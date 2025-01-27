@@ -195,7 +195,11 @@ export const LibraryPage = () => {
           style={libraryPageStyles.list}
           data={songs}
           renderItem={({item, index}) => (
-            <SongItem key={item.url} item={item} songs={songs} index={index} />
+            <SongItem
+              key={item.url}
+              item={item}
+              onPress={() => playNewPlaylist({tracks: songs, skipIndex: index})}
+            />
           )}
         />
       </ScrollView>

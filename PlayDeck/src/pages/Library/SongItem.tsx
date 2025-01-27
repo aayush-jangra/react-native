@@ -11,6 +11,7 @@ import {useNavigation} from '@react-navigation/native';
 import {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
 import {RootTabParamList} from '../../schema/routes';
 import Snackbar from 'react-native-snackbar';
+import {ListMenuItem} from '../../components/ListItemMenu';
 
 const styles = StyleSheet.create({
   container: {
@@ -42,20 +43,15 @@ const styles = StyleSheet.create({
 
 export const SongItem = ({
   item: song,
-  index: songIndex,
-  songs,
+  additionalMenuItems,
+  onPress,
 }: {
   item: Track;
-  index: number;
-  songs: Track[];
+  additionalMenuItems?: ListMenuItem[];
+  onPress: () => void;
 }) => {
-  const {
-    playNewPlaylist,
-    loadPlaylistsFromStorage,
-    setQueue,
-    setIsShuffled,
-    setStartQueue,
-  } = useAppState();
+  const {loadPlaylistsFromStorage, setQueue, setIsShuffled, setStartQueue} =
+    useAppState();
   const [showModal, setShowModal] = useState(false);
   const {navigate} = useNavigation<BottomTabNavigationProp<RootTabParamList>>();
 
@@ -112,6 +108,32 @@ export const SongItem = ({
     }
   };
 
+  const defaultMenuItems: ListMenuItem[] = [
+    {
+      icon: (
+        <IconMaterialCommunity name="playlist-plus" color={'white'} size={32} />
+      ),
+      text: 'Add to playlist',
+      onPress: () => {
+        setShowModal(true);
+      },
+    },
+    {
+      icon: <IconMaterial name="queue-play-next" color={'white'} size={32} />,
+      text: 'Play next in queue',
+      onPress: playNextInQueue,
+    },
+    {
+      icon: <IconMaterial name="add-to-queue" color={'white'} size={32} />,
+      text: 'Add to queue',
+      onPress: playLastInQueue,
+    },
+  ];
+
+  const menuItems = additionalMenuItems
+    ? [...defaultMenuItems, ...additionalMenuItems]
+    : defaultMenuItems;
+
   return (
     <>
       <ListItem
@@ -120,36 +142,8 @@ export const SongItem = ({
           subtitle: song.artist,
           duration: song.duration,
         }}
-        onPress={() => playNewPlaylist({tracks: songs, skipIndex: songIndex})}
-        menuItems={[
-          {
-            icon: (
-              <IconMaterialCommunity
-                name="playlist-plus"
-                color={'white'}
-                size={32}
-              />
-            ),
-            text: 'Add to playlist',
-            onPress: () => {
-              setShowModal(true);
-            },
-          },
-          {
-            icon: (
-              <IconMaterial name="queue-play-next" color={'white'} size={32} />
-            ),
-            text: 'Play next in queue',
-            onPress: playNextInQueue,
-          },
-          {
-            icon: (
-              <IconMaterial name="add-to-queue" color={'white'} size={32} />
-            ),
-            text: 'Add to queue',
-            onPress: playLastInQueue,
-          },
-        ]}
+        onPress={onPress}
+        menuItems={menuItems}
       />
       {showModal && (
         <CustomModalMenu
