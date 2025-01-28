@@ -4,8 +4,9 @@ import {Track} from 'react-native-track-player';
 import {convertMusicFilesIntoTracks} from '../utils/convertMusicFilesIntoTracks';
 import {getAll} from 'react-native-get-music-files';
 import {Platform} from 'react-native';
+import {SortOptions, SortOptionsMap} from '../pages/Library/sortOptions';
 
-export const useLoadSongsFromStorage = () => {
+export const useLoadSongsFromStorage = (sortOption: SortOptions) => {
   const [isLoading, setIsLoading] = useState(true);
   const [songs, setSongs] = useState<Track[] | null>(null);
   const [error, setError] = useState<{
@@ -24,10 +25,20 @@ export const useLoadSongsFromStorage = () => {
         try {
           const musicFiles = await getAll({
             minSongDuration: 30000,
+            sortBy: SortOptionsMap[sortOption].field,
+            sortOrder: SortOptionsMap[sortOption].order,
           });
           if (typeof musicFiles === 'string') {
             throw new Error('No music files found');
           }
+
+          // Sorting on title is not working, hence doing it manually
+          if (sortOption === 'a2z') {
+            musicFiles.sort((a, b) => a.title.localeCompare(b.title));
+          } else if (sortOption === 'z2a') {
+            musicFiles.sort((a, b) => b.title.localeCompare(a.title));
+          }
+
           const tracks = convertMusicFilesIntoTracks(musicFiles);
           setSongs(tracks);
           setError(null);
@@ -46,7 +57,7 @@ export const useLoadSongsFromStorage = () => {
     };
 
     fetchSongs();
-  }, []);
+  }, [sortOption]);
 
   return {isLoading, songs, error};
 };

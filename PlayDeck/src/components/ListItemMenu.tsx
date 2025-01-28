@@ -21,6 +21,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: 'white',
   },
+  paddingLeft: {
+    paddingLeft: 16,
+  },
 });
 
 export interface ListMenuItem {
@@ -34,7 +37,9 @@ export const ListItemMenu = ({menuItems}: {menuItems: ListMenuItem[]}) => {
 
   return (
     <>
-      <TouchableOpacity onPress={() => setShowMenu(true)}>
+      <TouchableOpacity
+        style={styles.paddingLeft}
+        onPress={() => setShowMenu(true)}>
         <IconEntypo name="dots-three-vertical" size={18} color={'white'} />
       </TouchableOpacity>
       <CustomModalMenu

@@ -1,11 +1,13 @@
 import {MMKV} from 'react-native-mmkv';
 import {PlayerData, PlaylistData} from '../schema/storage';
 import {Track} from 'react-native-track-player';
+import {SortOptions} from '../pages/Library/sortOptions';
 
 export enum StorageKeys {
   PLAYER_DATA = 'playerData',
   RECENT_SONGS_DATA = 'recentSongsData',
   PLAYLISTS_DATA = 'playlistsData',
+  SORT_PREFERENCE = 'sortPreference',
 }
 
 export class StorageService {
@@ -133,5 +135,17 @@ export class StorageService {
 
       this.storage.set(StorageKeys.PLAYLISTS_DATA, JSON.stringify(newData));
     }
+  }
+
+  public loadSortPreference() {
+    const sortPreference = this.storage.getString(
+      StorageKeys.SORT_PREFERENCE,
+    ) as SortOptions | undefined;
+
+    return sortPreference;
+  }
+
+  public setSortPreference(pref: SortOptions) {
+    this.storage.set(StorageKeys.SORT_PREFERENCE, pref);
   }
 }

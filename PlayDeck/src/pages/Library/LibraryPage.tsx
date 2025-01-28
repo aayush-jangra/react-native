@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
   Dimensions,
   FlatList,
@@ -19,6 +19,9 @@ import Animated, {
   useSharedValue,
 } from 'react-native-reanimated';
 import {SongItem} from './SongItem';
+import {SortButton} from './SortButton';
+import {StorageService} from '../../services/StorageService';
+import {SortOptions} from './sortOptions';
 
 const ABSOLUTE_BUTTON_WIDTH = 96;
 const ABSOLUTE_BUTTON_TRANSLATE_BUFFER = 96;
@@ -37,7 +40,7 @@ export const libraryPageStyles = StyleSheet.create({
     display: 'flex',
     borderTopLeftRadius: 32,
     borderTopRightRadius: 32,
-    paddingHorizontal: 32,
+    paddingHorizontal: 16,
   },
   controlsContainer: {
     display: 'flex',
@@ -104,7 +107,12 @@ export const libraryPageStyles = StyleSheet.create({
 
 export const LibraryPage = () => {
   const {playNewPlaylist} = useAppState();
-  const {isLoading, songs, error} = useLoadSongsFromStorage();
+  const storageSort = StorageService.getInstance().loadSortPreference();
+
+  const defaultSortOption: SortOptions = storageSort || 'a2z';
+
+  const [sortOption, setSortOption] = useState<SortOptions>(defaultSortOption);
+  const {isLoading, songs, error} = useLoadSongsFromStorage(sortOption);
   const scrollOffset = useSharedValue(0);
   const {width: windowWidth} = Dimensions.get('window');
 
@@ -155,6 +163,11 @@ export const LibraryPage = () => {
     return <LibraryPageFallback type="errorReading" />;
   }
 
+  const onSortingChange = (sortPref: SortOptions) => {
+    setSortOption(sortPref);
+    StorageService.getInstance().setSortPreference(sortPref);
+  };
+
   return (
     <LinearGradient
       colors={['#FFF2F2', '#FB818F', '#DE1241', '#260012']}
@@ -190,6 +203,10 @@ export const LibraryPage = () => {
             </TouchableOpacity>
           </Animated.View>
         </View>
+        <SortButton
+          sortPreference={sortOption}
+          onSortingChange={onSortingChange}
+        />
         <FlatList
           scrollEnabled={false}
           style={libraryPageStyles.list}
