@@ -65,6 +65,7 @@ export const FavouriteSongs = () => {
                   title: songOne.title,
                   subtitle: songOne.artist,
                   duration: songOne.duration,
+                  artwork: songOne.artwork,
                 }}
                 onPress={() =>
                   playNewPlaylist({
@@ -81,6 +82,7 @@ export const FavouriteSongs = () => {
                     title: songTwo.title,
                     subtitle: songTwo.artist,
                     duration: songTwo.duration,
+                    artwork: songTwo.artwork,
                   }}
                   onPress={() =>
                     playNewPlaylist({

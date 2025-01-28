@@ -141,6 +141,7 @@ export const SongItem = ({
           title: song.title,
           subtitle: song.artist,
           duration: song.duration,
+          artwork: song.artwork,
         }}
         onPress={onPress}
         menuItems={menuItems}

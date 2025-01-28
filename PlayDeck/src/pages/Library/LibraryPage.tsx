@@ -202,6 +202,7 @@ export const LibraryPage = () => {
             />
           )}
         />
+        <View style={{height: ABSOLUTE_BUTTON_WIDTH}}>{}</View>
       </ScrollView>
       <Animated.View
         style={[libraryPageStyles.absolutePlay, animatedStylesPlayAbsolute]}>

@@ -142,6 +142,7 @@ export const MiniPlayer = () => {
                       title: currentTrack.title,
                       subtitle: currentTrack.artist,
                       duration: currentTrack.duration,
+                      artwork: currentTrack.artwork,
                     }}
                     showDuration={false}
                   />

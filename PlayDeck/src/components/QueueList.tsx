@@ -162,6 +162,7 @@ export const QueueList = () => {
                     title: item.title,
                     subtitle: item.artist,
                     duration: item.duration,
+                    artwork: item.artwork,
                   }}
                   onPress={() => playFromQueue(index)}
                 />

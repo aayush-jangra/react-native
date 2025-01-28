@@ -23,7 +23,7 @@ export const useLoadSongsFromStorage = () => {
       if (readPermission === 'granted') {
         try {
           const musicFiles = await getAll({
-            minSongDuration: 10000,
+            minSongDuration: 30000,
           });
           if (typeof musicFiles === 'string') {
             throw new Error('No music files found');
