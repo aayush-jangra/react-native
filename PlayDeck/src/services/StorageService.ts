@@ -40,6 +40,7 @@ export class StorageService {
     playingQueue,
     repeatMode,
     isShuffled,
+    playingFrom,
   }: PlayerData) {
     let overrideData: Partial<PlayerData> = {};
     if (playingTrackIndex !== undefined) {
@@ -56,6 +57,9 @@ export class StorageService {
     }
     if (repeatMode !== undefined) {
       overrideData = {...overrideData, repeatMode};
+    }
+    if (playingFrom !== undefined) {
+      overrideData = {...overrideData, playingFrom};
     }
 
     const existingData = this.loadPlayerData();

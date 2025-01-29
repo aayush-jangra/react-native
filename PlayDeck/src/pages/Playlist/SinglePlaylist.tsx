@@ -126,7 +126,7 @@ export const SinglePlaylist = ({route}: SinglePlaylistProps) => {
         <View style={styles.controlsContainer}>
           <TouchableOpacity
             style={styles.iconButton}
-            onPress={() => playNewPlaylist({tracks: songs})}>
+            onPress={() => playNewPlaylist({playingFrom: name, tracks: songs})}>
             <IconEntypo
               name="controller-play"
               size={48}
@@ -136,7 +136,9 @@ export const SinglePlaylist = ({route}: SinglePlaylistProps) => {
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.iconButton}
-            onPress={() => playNewPlaylist({tracks: songs, shuffle: true})}>
+            onPress={() =>
+              playNewPlaylist({playingFrom: name, tracks: songs, shuffle: true})
+            }>
             <IconMaterialCommunity
               name="shuffle-variant"
               size={36}
@@ -150,9 +152,16 @@ export const SinglePlaylist = ({route}: SinglePlaylistProps) => {
           data={songs}
           renderItem={({item, index}) => (
             <SongItem
+              playingFrom={name}
               key={item.url}
               item={item}
-              onPress={() => playNewPlaylist({tracks: songs, skipIndex: index})}
+              onPress={() =>
+                playNewPlaylist({
+                  playingFrom: name,
+                  tracks: songs,
+                  skipIndex: index,
+                })
+              }
               additionalMenuItems={[
                 {
                   text: 'Remove from playlist',

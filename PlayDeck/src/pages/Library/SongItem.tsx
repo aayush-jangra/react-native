@@ -42,16 +42,23 @@ const styles = StyleSheet.create({
 });
 
 export const SongItem = ({
+  playingFrom,
   item: song,
   additionalMenuItems,
   onPress,
 }: {
+  playingFrom: string;
   item: Track;
   additionalMenuItems?: ListMenuItem[];
   onPress: () => void;
 }) => {
-  const {loadPlaylistsFromStorage, setQueue, setIsShuffled, setStartQueue} =
-    useAppState();
+  const {
+    loadPlaylistsFromStorage,
+    setQueue,
+    setIsShuffled,
+    setStartQueue,
+    addItemInPlayingQueueFrom,
+  } = useAppState();
   const [showModal, setShowModal] = useState(false);
   const {navigate} = useNavigation<BottomTabNavigationProp<RootTabParamList>>();
 
@@ -70,6 +77,7 @@ export const SongItem = ({
     await TrackPlayer.add(song, insertBeforeIndex);
     const newQueue = await TrackPlayer.getQueue();
     setQueue([...newQueue]);
+    addItemInPlayingQueueFrom(playingFrom);
     setStartQueue([...newQueue]);
     setIsShuffled(false);
     StorageService.getInstance().setPlayerData({

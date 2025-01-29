@@ -69,6 +69,7 @@ export const RecentSongs = () => {
                 }}
                 onPress={() =>
                   playNewPlaylist({
+                    playingFrom: 'Recent',
                     tracks: recentSongs,
                     skipIndex: index * rowSize,
                   })
@@ -86,6 +87,7 @@ export const RecentSongs = () => {
                   }}
                   onPress={() =>
                     playNewPlaylist({
+                      playingFrom: 'Recent',
                       tracks: recentSongs,
                       skipIndex: index * rowSize + 1,
                     })

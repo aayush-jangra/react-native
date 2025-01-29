@@ -182,7 +182,9 @@ export const LibraryPage = () => {
           <Animated.View style={animatedStylesPlayStatic}>
             <TouchableOpacity
               style={libraryPageStyles.iconButton}
-              onPress={() => playNewPlaylist({tracks: songs})}>
+              onPress={() =>
+                playNewPlaylist({playingFrom: 'Library', tracks: songs})
+              }>
               <IconEntypo
                 name="controller-play"
                 size={48}
@@ -194,7 +196,13 @@ export const LibraryPage = () => {
           <Animated.View style={animatedStylesShuffleStatic}>
             <TouchableOpacity
               style={libraryPageStyles.iconButton}
-              onPress={() => playNewPlaylist({tracks: songs, shuffle: true})}>
+              onPress={() =>
+                playNewPlaylist({
+                  playingFrom: 'Library',
+                  tracks: songs,
+                  shuffle: true,
+                })
+              }>
               <IconMaterialCommunity
                 name="shuffle-variant"
                 size={36}
@@ -213,9 +221,16 @@ export const LibraryPage = () => {
           data={songs}
           renderItem={({item, index}) => (
             <SongItem
+              playingFrom="Library"
               key={item.url}
               item={item}
-              onPress={() => playNewPlaylist({tracks: songs, skipIndex: index})}
+              onPress={() =>
+                playNewPlaylist({
+                  playingFrom: 'Library',
+                  tracks: songs,
+                  skipIndex: index,
+                })
+              }
             />
           )}
         />
@@ -225,7 +240,9 @@ export const LibraryPage = () => {
         style={[libraryPageStyles.absolutePlay, animatedStylesPlayAbsolute]}>
         <TouchableOpacity
           style={libraryPageStyles.iconButtonAbsolute}
-          onPress={() => playNewPlaylist({tracks: songs})}>
+          onPress={() =>
+            playNewPlaylist({playingFrom: 'Library', tracks: songs})
+          }>
           <IconEntypo
             name="controller-play"
             size={48}
@@ -241,7 +258,13 @@ export const LibraryPage = () => {
         ]}>
         <TouchableOpacity
           style={libraryPageStyles.iconButtonAbsolute}
-          onPress={() => playNewPlaylist({tracks: songs, shuffle: true})}>
+          onPress={() =>
+            playNewPlaylist({
+              playingFrom: 'Library',
+              tracks: songs,
+              shuffle: true,
+            })
+          }>
           <IconMaterialCommunity
             name="shuffle-variant"
             size={36}

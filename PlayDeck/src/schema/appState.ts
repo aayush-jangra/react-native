@@ -2,6 +2,12 @@ import {Dispatch, SetStateAction} from 'react';
 import {Track} from 'react-native-track-player';
 import {PlaylistData} from './storage';
 
+export interface PlayNewPlaylistProps {
+  tracks: Track[];
+  playingFrom: string;
+  shuffle?: boolean;
+  skipIndex?: number;
+}
 export interface AppState {
   isShuffled: boolean;
   setIsShuffled: Dispatch<SetStateAction<boolean>>;
@@ -16,13 +22,11 @@ export interface AppState {
   playlists: PlaylistData[];
   setPlaylists: Dispatch<SetStateAction<PlaylistData[]>>;
   loadPlaylistsFromStorage: () => void;
+  playingQueueFrom: string[];
   playNewPlaylist: ({
     tracks,
     shuffle,
     skipIndex,
-  }: {
-    tracks: Track[];
-    shuffle?: boolean;
-    skipIndex?: number;
-  }) => Promise<void>;
+  }: PlayNewPlaylistProps) => Promise<void>;
+  addItemInPlayingQueueFrom: (item: string) => void;
 }

@@ -65,10 +65,20 @@ const styles = StyleSheet.create({
   queueContainer: {
     paddingHorizontal: 32,
   },
+  playingFromText: {
+    fontSize: 12,
+    color: 'white',
+    alignSelf: 'flex-start',
+    marginLeft: 32,
+  },
+  playingFromTextList: {
+    fontWeight: 500,
+    color: '#2CB0F2',
+  },
 });
 
 export const QueueList = () => {
-  const {queue} = useAppState();
+  const {queue, playingQueueFrom} = useAppState();
   const [currentTrackIndex, setCurrentTrackIndex] = useState<
     number | undefined
   >();
@@ -81,6 +91,21 @@ export const QueueList = () => {
       setCurrentTrackIndex(ati);
     })();
   }, []);
+
+  const getPlayingFromText = () => {
+    let startText = '',
+      list = '';
+    if (playingQueueFrom.length) {
+      startText += 'Playing from ';
+      list = playingQueueFrom[0];
+
+      for (let i = 1; i < playingQueueFrom.length; i++) {
+        list += ', ' + playingQueueFrom[i];
+      }
+    }
+
+    return {startText, list};
+  };
 
   TrackPlayer.addEventListener(Event.PlaybackActiveTrackChanged, ({index}) => {
     setCurrentTrackIndex(index);
@@ -142,6 +167,12 @@ export const QueueList = () => {
           <IconMaterial name="queue-music" size={32} color="#E6C72E" />
         </View>
       </GestureDetector>
+      <Text numberOfLines={1} style={styles.playingFromText}>
+        {getPlayingFromText().startText}
+        <Text style={styles.playingFromTextList}>
+          {getPlayingFromText().list}
+        </Text>
+      </Text>
       {queue ? (
         <FlatList
           style={styles.list}

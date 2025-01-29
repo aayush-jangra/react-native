@@ -5,6 +5,7 @@ export interface PlayerData {
   playingTrackIndex?: number;
   startQueue?: Track[];
   playingQueue?: Track[];
+  playingFrom?: string[];
   isShuffled?: boolean;
   repeatMode?: RepeatMode;
 }

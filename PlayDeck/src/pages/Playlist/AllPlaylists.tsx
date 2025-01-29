@@ -10,7 +10,7 @@ import {useNavigation} from '@react-navigation/native';
 import {PlaylistStackParamList} from '../../schema/routes';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {showSnackbar} from '../../utils/showSnackbar';
-import TrackPlayer, {Track} from 'react-native-track-player';
+import TrackPlayer from 'react-native-track-player';
 import {CustomModalMenu} from '../../components/CustomModalMenu';
 import {PlaylistData} from '../../schema/storage';
 
@@ -108,6 +108,7 @@ export const AllPlaylists = () => {
     setStartQueue,
     setIsShuffled,
     loadPlaylistsFromStorage,
+    addItemInPlayingQueueFrom,
   } = useAppState();
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [selectedPlaylist, setSelectedPlaylist] = useState<PlaylistData | null>(
@@ -134,10 +135,14 @@ export const AllPlaylists = () => {
     setShowCreateModal(false);
   };
 
-  const addToQueue = async (tracks: Track[], insertBeforeIndex?: number) => {
-    await TrackPlayer.add(tracks, insertBeforeIndex);
+  const addToQueue = async (
+    playlist: PlaylistData,
+    insertBeforeIndex?: number,
+  ) => {
+    await TrackPlayer.add(playlist.tracks, insertBeforeIndex);
     const newQueue = await TrackPlayer.getQueue();
     setQueue([...newQueue]);
+    addItemInPlayingQueueFrom(playlist.name);
     setStartQueue([...newQueue]);
     setIsShuffled(false);
     storage.setPlayerData({
@@ -147,15 +152,15 @@ export const AllPlaylists = () => {
     });
   };
 
-  const playLastInQueue = async (tracks: Track[]) => {
-    await addToQueue(tracks);
+  const playLastInQueue = async (playlist: PlaylistData) => {
+    await addToQueue(playlist);
     showSnackbar('Added playlist to queue');
   };
 
-  const playNextInQueue = async (tracks: Track[]) => {
+  const playNextInQueue = async (playlist: PlaylistData) => {
     const currentIndex = await TrackPlayer.getActiveTrackIndex();
     if (currentIndex !== undefined) {
-      addToQueue(tracks, currentIndex + 1);
+      addToQueue(playlist, currentIndex + 1);
       showSnackbar('Playlist will play next');
     } else {
       showSnackbar('Could not add playlist');
@@ -233,7 +238,7 @@ export const AllPlaylists = () => {
                           />
                         ),
                         text: 'Play next in queue',
-                        onPress: () => playNextInQueue(item.tracks),
+                        onPress: () => playNextInQueue(item),
                       },
                       {
                         icon: (
@@ -244,7 +249,7 @@ export const AllPlaylists = () => {
                           />
                         ),
                         text: 'Add to queue',
-                        onPress: () => playLastInQueue(item.tracks),
+                        onPress: () => playLastInQueue(item),
                       },
                       {
                         text: 'Delete playlist',
