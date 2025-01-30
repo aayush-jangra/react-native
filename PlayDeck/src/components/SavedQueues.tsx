@@ -15,6 +15,7 @@ import {showSnackbar} from '../utils/showSnackbar';
 import {SavedQueueData} from '../schema/storage';
 import {useAppState} from '../Providers/AppProvider';
 import {usePlayerState} from '../Providers/usePlayerState';
+import {ConfirmationModal} from './ConfrimationModal';
 
 const styles = StyleSheet.create({
   container: {
@@ -77,11 +78,15 @@ export const SavedQueues = ({showTracks}: {showTracks: () => void}) => {
   const {playSavedQueue} = usePlayerState();
   const storageQueues = StorageService.getInstance().loadSavedQueues();
   const [savedQueues, setSavedQueues] = useState(storageQueues ?? []);
+  const [selectedQueue, setSelectedQueue] = useState<string | null>(null);
+  const [showConfirmationModal, setShowConfirmationModal] = useState(false);
 
-  const deleteQueue = (name: string) => {
-    setSavedQueues(prev => prev.filter(item => item.name !== name));
-    StorageService.getInstance().deleteQueue(name);
-    showSnackbar('Queue removed');
+  const deleteQueue = () => {
+    if (selectedQueue) {
+      setSavedQueues(prev => prev.filter(item => item.name !== selectedQueue));
+      StorageService.getInstance().deleteQueue(selectedQueue);
+      showSnackbar('Queue removed');
+    }
   };
 
   const playQueue = async (queueData: SavedQueueData) => {
@@ -116,7 +121,11 @@ export const SavedQueues = ({showTracks}: {showTracks: () => void}) => {
                   </Text>
                 </Text>
               </View>
-              <TouchableOpacity onPress={() => deleteQueue(item.name)}>
+              <TouchableOpacity
+                onPress={() => {
+                  setSelectedQueue(item.name);
+                  setShowConfirmationModal(true);
+                }}>
                 <IconMaterialCommunity
                   name="delete"
                   size={26}
@@ -133,6 +142,13 @@ export const SavedQueues = ({showTracks}: {showTracks: () => void}) => {
         <View style={styles.emptyList}>
           <Text style={styles.emptyListText}>No saved queue</Text>
         </View>
+      )}
+      {showConfirmationModal && (
+        <ConfirmationModal
+          confirmationText="Delete queue?"
+          onClose={() => setShowConfirmationModal(false)}
+          onConfirm={deleteQueue}
+        />
       )}
     </View>
   );

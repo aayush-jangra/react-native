@@ -14,6 +14,7 @@ import TrackPlayer from 'react-native-track-player';
 import {CustomModalMenu} from '../../components/CustomModalMenu';
 import {PlaylistData} from '../../schema/storage';
 import {usePlayerState} from '../../Providers/usePlayerState';
+import {ConfirmationModal} from '../../components/ConfrimationModal';
 
 const styles = StyleSheet.create({
   container: {flex: 1, display: 'flex'},
@@ -105,6 +106,7 @@ export const AllPlaylists = () => {
   const {playlists, setPlaylists, loadPlaylistsFromStorage} = useAppState();
   const {addToQueue} = usePlayerState();
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedPlaylist, setSelectedPlaylist] = useState<PlaylistData | null>(
     null,
   );
@@ -148,11 +150,15 @@ export const AllPlaylists = () => {
     }
   };
 
-  const deletePlaylist = (playlistName: string) => {
-    storage.deletePlaylist(playlistName);
-    setPlaylists(prev => prev.filter(({name}) => name !== playlistName));
+  const deletePlaylist = () => {
+    if (selectedPlaylist) {
+      storage.deletePlaylist(selectedPlaylist.name);
+      setPlaylists(prev =>
+        prev.filter(({name}) => name !== selectedPlaylist.name),
+      );
 
-    showSnackbar('Deleted playlist' + playlistName);
+      showSnackbar('Deleted playlist ' + selectedPlaylist.name);
+    }
   };
 
   const onPlaylistPress = (playlistName: string) => {
@@ -241,7 +247,10 @@ export const AllPlaylists = () => {
                             size={32}
                           />
                         ),
-                        onPress: () => deletePlaylist(item.name),
+                        onPress: () => {
+                          setSelectedPlaylist({...item});
+                          setShowDeleteModal(true);
+                        },
                       },
                     ]}
                   />
@@ -280,6 +289,14 @@ export const AllPlaylists = () => {
             onClose={() => setShowCreateModal(false)}
             existingNames={existingPlaylistNames}
             onCreate={onCreate}
+          />
+        )}
+        {showDeleteModal && (
+          <ConfirmationModal
+            confirmationText="Delete playlist?"
+            visible
+            onClose={() => setShowDeleteModal(false)}
+            onConfirm={deletePlaylist}
           />
         )}
         {showPlaylistsModal && (
