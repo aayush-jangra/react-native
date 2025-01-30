@@ -5,7 +5,7 @@ import {useAppState} from '../Providers/AppProvider';
 import {updateRecentSongs} from '../utils/updateRecentSongs';
 
 export const AppWideEventListener = () => {
-  const {setRecentSongs} = useAppState();
+  const {setRecentSongs, setQueueName} = useAppState();
   const lastUpdatedTrack = useRef<Track | null>(null);
 
   TrackPlayer.addEventListener(Event.PlaybackActiveTrackChanged, ({track}) => {
@@ -25,6 +25,18 @@ export const AppWideEventListener = () => {
               const updatedList = updateRecentSongs([...prev], activeTrack);
               StorageService.getInstance().setRecentSongs(updatedList);
               return updatedList;
+            });
+            TrackPlayer.getActiveTrackIndex().then(index => {
+              if (index !== undefined) {
+                setQueueName(prev => {
+                  if (prev) {
+                    StorageService.getInstance().updateQueue(prev, {
+                      playingTrackIndex: index,
+                    });
+                  }
+                  return prev;
+                });
+              }
             });
           }
         });

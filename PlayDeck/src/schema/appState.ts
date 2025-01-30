@@ -1,16 +1,12 @@
 import {Dispatch, SetStateAction} from 'react';
-import {Track} from 'react-native-track-player';
+import {RepeatMode, Track} from 'react-native-track-player';
 import {PlaylistData} from './storage';
 
-export interface PlayNewPlaylistProps {
-  tracks: Track[];
-  playingFrom: string;
-  shuffle?: boolean;
-  skipIndex?: number;
-}
 export interface AppState {
   isShuffled: boolean;
   setIsShuffled: Dispatch<SetStateAction<boolean>>;
+  repeatMode: RepeatMode;
+  setRepeatMode: Dispatch<SetStateAction<RepeatMode>>;
   isPlayerSetup: boolean;
   setIsPlayerSetup: Dispatch<SetStateAction<boolean>>;
   startQueue: Track[] | null;
@@ -26,10 +22,4 @@ export interface AppState {
   loadPlaylistsFromStorage: () => void;
   playingQueueFrom: string[];
   setPlayingQueueFrom: React.Dispatch<React.SetStateAction<string[]>>;
-  playNewPlaylist: ({
-    tracks,
-    shuffle,
-    skipIndex,
-  }: PlayNewPlaylistProps) => Promise<void>;
-  addItemInPlayingQueueFrom: (item: string) => void;
 }

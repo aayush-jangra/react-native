@@ -12,6 +12,7 @@ import {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
 import {RootTabParamList} from '../../schema/routes';
 import {ListMenuItem} from '../../components/ListItemMenu';
 import {showSnackbar} from '../../utils/showSnackbar';
+import {usePlayerState} from '../../Providers/usePlayerState';
 
 const styles = StyleSheet.create({
   container: {
@@ -52,13 +53,8 @@ export const SongItem = ({
   additionalMenuItems?: ListMenuItem[];
   onPress: () => void;
 }) => {
-  const {
-    loadPlaylistsFromStorage,
-    setQueue,
-    setIsShuffled,
-    setStartQueue,
-    addItemInPlayingQueueFrom,
-  } = useAppState();
+  const {loadPlaylistsFromStorage} = useAppState();
+  const {addToQueue} = usePlayerState();
   const [showModal, setShowModal] = useState(false);
   const {navigate} = useNavigation<BottomTabNavigationProp<RootTabParamList>>();
 
@@ -73,29 +69,19 @@ export const SongItem = ({
     showSnackbar('Added song to ' + playlistName);
   };
 
-  const addToQueue = async (insertBeforeIndex?: number) => {
-    await TrackPlayer.add(song, insertBeforeIndex);
-    const newQueue = await TrackPlayer.getQueue();
-    setQueue([...newQueue]);
-    addItemInPlayingQueueFrom(playingFrom);
-    setStartQueue([...newQueue]);
-    setIsShuffled(false);
-    StorageService.getInstance().setPlayerData({
-      isShuffled: false,
-      playingQueue: [...newQueue],
-      startQueue: [...newQueue],
-    });
-  };
-
   const playLastInQueue = async () => {
-    await addToQueue();
+    await addToQueue({tracks: [song], playingFrom});
     showSnackbar('Added song to queue');
   };
 
   const playNextInQueue = async () => {
     const currentIndex = await TrackPlayer.getActiveTrackIndex();
     if (currentIndex !== undefined) {
-      addToQueue(currentIndex + 1);
+      await addToQueue({
+        tracks: [song],
+        playingFrom,
+        insertBeforeIndex: currentIndex + 1,
+      });
       showSnackbar('Song will play next');
     } else {
       showSnackbar('Could not add song');

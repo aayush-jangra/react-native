@@ -2,7 +2,6 @@ import React from 'react';
 import {FlatList, StyleSheet, Text} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import {RecentSongs} from '../components/RecentSongs';
-import {FavouriteSongs} from '../components/FavouriteSongs';
 
 const styles = StyleSheet.create({
   container: {flex: 1, display: 'flex'},
@@ -22,14 +21,7 @@ const styles = StyleSheet.create({
 });
 
 export const HomePage = () => {
-  const sections = [
-    {key: 'RecentSongs', Component: <RecentSongs />},
-    {
-      key: 'FavouriteSongs',
-      Component: <FavouriteSongs />,
-    },
-    {key: 'RecentSongs2', Component: <RecentSongs />},
-  ];
+  const sections = [{key: 'RecentSongs', Component: <RecentSongs />}];
 
   return (
     <LinearGradient

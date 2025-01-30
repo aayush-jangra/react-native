@@ -11,7 +11,6 @@ import {
 import LinearGradient from 'react-native-linear-gradient';
 import IconEntypo from 'react-native-vector-icons/Entypo';
 import IconMaterialCommunity from 'react-native-vector-icons/MaterialCommunityIcons';
-import {useAppState} from '../../Providers/AppProvider';
 import {useLoadSongsFromStorage} from '../../hooks/useReadStorage';
 import {LibraryPageFallback} from './LibraryPageFallback';
 import Animated, {
@@ -22,6 +21,7 @@ import {SongItem} from './SongItem';
 import {SortButton} from './SortButton';
 import {StorageService} from '../../services/StorageService';
 import {SortOptions} from './sortOptions';
+import {usePlayerState} from '../../Providers/usePlayerState';
 
 const ABSOLUTE_BUTTON_WIDTH = 96;
 const ABSOLUTE_BUTTON_TRANSLATE_BUFFER = 96;
@@ -106,7 +106,7 @@ export const libraryPageStyles = StyleSheet.create({
 });
 
 export const LibraryPage = () => {
-  const {playNewPlaylist} = useAppState();
+  const {playNewPlaylist} = usePlayerState();
   const storageSort = StorageService.getInstance().loadSortPreference();
 
   const defaultSortOption: SortOptions = storageSort || 'a2z';

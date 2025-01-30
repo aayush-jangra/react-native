@@ -209,6 +209,21 @@ export class StorageService {
     );
   }
 
+  public updateQueue(queueName: string, queue: Partial<SavedQueueData>) {
+    const existingQueues = this.loadSavedQueues() || [];
+    const index = existingQueues.findIndex(item => item.name === queueName);
+
+    if (index !== -1) {
+      const existingQueue = existingQueues[index];
+      existingQueues[index] = {...existingQueue, ...queue};
+
+      this.storage.set(
+        StorageKeys.SAVED_QUEUES_DATA,
+        JSON.stringify(existingQueues),
+      );
+    }
+  }
+
   public deleteQueue(queueName: string) {
     const existingQueues = this.loadSavedQueues() || [];
 

@@ -17,6 +17,7 @@ import {SongItem} from '../Library/SongItem';
 import {formatTimeInLetters} from '../../utils/formatTime';
 import {Track} from 'react-native-track-player';
 import {StorageService} from '../../services/StorageService';
+import {usePlayerState} from '../../Providers/usePlayerState';
 
 const styles = StyleSheet.create({
   container: {
@@ -96,7 +97,8 @@ export const SinglePlaylist = ({route}: SinglePlaylistProps) => {
   const [trackCount, setTrackCount] = useState(numberOfTracks);
   const [songs, setSongs] = useState([...tracks]);
 
-  const {playNewPlaylist, loadPlaylistsFromStorage} = useAppState();
+  const {loadPlaylistsFromStorage} = useAppState();
+  const {playNewPlaylist} = usePlayerState();
 
   const removeTrack = (track: Track) => {
     StorageService.getInstance().removeTrackFromPlaylist(name, track);

@@ -1,8 +1,7 @@
 import React, {createContext, useContext, useEffect, useState} from 'react';
-import {AppState, PlayNewPlaylistProps} from '../schema/appState';
+import {AppState} from '../schema/appState';
 import TrackPlayer, {RepeatMode, Track} from 'react-native-track-player';
 import {setupPlayer} from '../services/PlaybackService';
-import {shuffleArray} from '../utils/shuffle';
 import {requestStoragePermission} from '../utils/requestPermissions';
 import {StorageService} from '../services/StorageService';
 import {AppWideEventListener} from '../components/AppWideEventListener';
@@ -11,14 +10,17 @@ import {PlaylistData} from '../schema/storage';
 const AppContext = createContext<AppState | undefined>(undefined);
 
 export const AppProvider = ({children}: {children: React.ReactNode}) => {
+  // Player data
   const [isShuffled, setIsShuffled] = useState(false);
+  const [repeatMode, setRepeatMode] = useState<RepeatMode>(RepeatMode.Off);
   const [startQueue, setStartQueue] = useState<Track[] | null>(null);
-  const [isPlayerSetup, setIsPlayerSetup] = useState(false);
   const [queue, setQueue] = useState<Track[] | null>(null);
   const [queueName, setQueueName] = useState<string | undefined>();
   const [playingQueueFrom, setPlayingQueueFrom] = useState<string[]>([]);
-  const [recentSongs, setRecentSongs] = useState<Track[]>([]);
+
   const [playlists, setPlaylists] = useState<PlaylistData[]>([]);
+  const [isPlayerSetup, setIsPlayerSetup] = useState(false);
+  const [recentSongs, setRecentSongs] = useState<Track[]>([]);
 
   const setupTrackPlayer = async () => {
     const isSetup = await setupPlayer();
@@ -37,7 +39,7 @@ export const AppProvider = ({children}: {children: React.ReactNode}) => {
           playingTrackIndex,
           startQueue: startQueueStorage,
           isShuffled: isShuffledStorage,
-          repeatMode,
+          repeatMode: repeatModeStorage,
           playingFrom,
           name,
         } = storagePlayerData;
@@ -50,7 +52,7 @@ export const AppProvider = ({children}: {children: React.ReactNode}) => {
           await TrackPlayer.add(playingQueue);
         }
         setIsShuffled(isShuffledStorage ?? false);
-        await TrackPlayer.setRepeatMode(repeatMode ?? RepeatMode.Off);
+        await TrackPlayer.setRepeatMode(repeatModeStorage ?? RepeatMode.Off);
         await TrackPlayer.skip(playingTrackIndex ?? 0);
       }
       setIsPlayerSetup(true);
@@ -71,55 +73,17 @@ export const AppProvider = ({children}: {children: React.ReactNode}) => {
     loadPlaylistsFromStorage();
   }, []);
 
-  const playNewPlaylist = async ({
-    tracks,
-    playingFrom,
-    shuffle = false,
-    skipIndex = 0,
-  }: PlayNewPlaylistProps) => {
-    const newPlaylist = [...tracks];
-    setStartQueue([...tracks]);
-    setQueueName(undefined);
-    if (shuffle) {
-      shuffleArray(newPlaylist);
-      setIsShuffled(true);
-    }
-    await TrackPlayer.reset();
-    await TrackPlayer.add(newPlaylist);
-    await TrackPlayer.skip(skipIndex);
-    setQueue(newPlaylist);
-    setPlayingQueueFrom([playingFrom]);
-    await TrackPlayer.play();
-    StorageService.getInstance().setPlayerData({
-      playingFrom: [playingFrom],
-      playingTrackIndex: skipIndex,
-      startQueue: [...tracks],
-      playingQueue: [...newPlaylist],
-      isShuffled: shuffle,
-      name: undefined,
-    });
-  };
-
-  const addItemInPlayingQueueFrom = (item: string) => {
-    const newPlayingFrom = playingQueueFrom.some(value => value === item)
-      ? [...playingQueueFrom]
-      : [...playingQueueFrom, item];
-    setPlayingQueueFrom(newPlayingFrom);
-    StorageService.getInstance().setPlayerData({
-      playingFrom: newPlayingFrom,
-    });
-  };
-
   return (
     <AppContext.Provider
       value={{
         queue,
         setQueue,
+        repeatMode,
+        setRepeatMode,
         queueName,
         setQueueName,
         playingQueueFrom,
         setPlayingQueueFrom,
-        playNewPlaylist,
         isShuffled,
         setIsShuffled,
         startQueue,
@@ -131,7 +95,6 @@ export const AppProvider = ({children}: {children: React.ReactNode}) => {
         playlists,
         setPlaylists,
         loadPlaylistsFromStorage,
-        addItemInPlayingQueueFrom,
       }}>
       {children}
       <AppWideEventListener />

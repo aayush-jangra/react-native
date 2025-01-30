@@ -1,13 +1,13 @@
 import React, {useEffect, useState} from 'react';
 import {View, Text, TouchableOpacity, FlatList, StyleSheet} from 'react-native';
 import {ListItem} from './ListItem';
-import TrackPlayer, {Event, RepeatMode} from 'react-native-track-player';
+import TrackPlayer, {Event} from 'react-native-track-player';
 import {StorageService} from '../services/StorageService';
-import {showSnackbar} from '../utils/showSnackbar';
 import {CreatePlaylistModal} from './CreateListModal';
 import IconMaterial from 'react-native-vector-icons/MaterialIcons';
 import {useAppState} from '../Providers/AppProvider';
 import {getPlayingFromText} from '../utils/getPlayingFromText';
+import {usePlayerState} from '../Providers/usePlayerState';
 
 const styles = StyleSheet.create({
   list: {
@@ -52,8 +52,8 @@ const styles = StyleSheet.create({
 });
 
 export const QueueTracks = () => {
-  const {queue, playingQueueFrom, startQueue, isShuffled, setQueueName} =
-    useAppState();
+  const {queue, playingQueueFrom} = useAppState();
+  const {saveQueue} = usePlayerState();
   const [currentTrackIndex, setCurrentTrackIndex] = useState<
     number | undefined
   >();
@@ -80,30 +80,6 @@ export const QueueTracks = () => {
   const existingPlaylistNames = existingQueues.flatMap(
     playlist => playlist.name,
   );
-
-  const saveQueue = (name: string) => {
-    if (
-      playingQueueFrom &&
-      queue &&
-      startQueue &&
-      currentTrackIndex !== undefined
-    ) {
-      StorageService.getInstance().saveQueue({
-        playingQueue: queue,
-        startQueue: startQueue,
-        playingFrom: playingQueueFrom,
-        playingTrackIndex: currentTrackIndex,
-        name,
-        isShuffled,
-        repeatMode: RepeatMode.Off,
-      });
-      setQueueName(name);
-      StorageService.getInstance().setPlayerData({name});
-      showSnackbar('Queue saved');
-    } else {
-      showSnackbar('There was an error saving queue');
-    }
-  };
 
   const onCreate = (name: string) => {
     setShowInputModal(false);

@@ -13,6 +13,7 @@ import {showSnackbar} from '../../utils/showSnackbar';
 import TrackPlayer from 'react-native-track-player';
 import {CustomModalMenu} from '../../components/CustomModalMenu';
 import {PlaylistData} from '../../schema/storage';
+import {usePlayerState} from '../../Providers/usePlayerState';
 
 const styles = StyleSheet.create({
   container: {flex: 1, display: 'flex'},
@@ -101,15 +102,8 @@ const styles = StyleSheet.create({
 });
 
 export const AllPlaylists = () => {
-  const {
-    playlists,
-    setPlaylists,
-    setQueue,
-    setStartQueue,
-    setIsShuffled,
-    loadPlaylistsFromStorage,
-    addItemInPlayingQueueFrom,
-  } = useAppState();
+  const {playlists, setPlaylists, loadPlaylistsFromStorage} = useAppState();
+  const {addToQueue} = usePlayerState();
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [selectedPlaylist, setSelectedPlaylist] = useState<PlaylistData | null>(
     null,
@@ -135,32 +129,19 @@ export const AllPlaylists = () => {
     setShowCreateModal(false);
   };
 
-  const addToQueue = async (
-    playlist: PlaylistData,
-    insertBeforeIndex?: number,
-  ) => {
-    await TrackPlayer.add(playlist.tracks, insertBeforeIndex);
-    const newQueue = await TrackPlayer.getQueue();
-    setQueue([...newQueue]);
-    addItemInPlayingQueueFrom(playlist.name);
-    setStartQueue([...newQueue]);
-    setIsShuffled(false);
-    storage.setPlayerData({
-      isShuffled: false,
-      playingQueue: [...newQueue],
-      startQueue: [...newQueue],
-    });
-  };
-
   const playLastInQueue = async (playlist: PlaylistData) => {
-    await addToQueue(playlist);
+    await addToQueue({tracks: playlist.tracks, playingFrom: playlist.name});
     showSnackbar('Added playlist to queue');
   };
 
   const playNextInQueue = async (playlist: PlaylistData) => {
     const currentIndex = await TrackPlayer.getActiveTrackIndex();
     if (currentIndex !== undefined) {
-      addToQueue(playlist, currentIndex + 1);
+      await addToQueue({
+        tracks: playlist.tracks,
+        playingFrom: playlist.name,
+        insertBeforeIndex: currentIndex + 1,
+      });
       showSnackbar('Playlist will play next');
     } else {
       showSnackbar('Could not add playlist');

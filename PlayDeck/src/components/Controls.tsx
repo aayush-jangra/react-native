@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import {
   View,
   TouchableOpacity,
@@ -20,7 +20,8 @@ import {formatTime} from '../utils/formatTime';
 import Slider from '@react-native-community/slider';
 import {useShuffleQueue} from '../hooks/useShuffleQueue';
 import Animated, {AnimatedStyle} from 'react-native-reanimated';
-import {StorageService} from '../services/StorageService';
+import {useAppState} from '../Providers/AppProvider';
+import {usePlayerState} from '../Providers/usePlayerState';
 
 const styles = StyleSheet.create({
   text: {
@@ -71,9 +72,10 @@ export const Controls = ({
 }: {
   sliderStyle: AnimatedStyle<ViewStyle>;
 }) => {
+  const {repeatMode} = useAppState();
+  const {switchRepeatMode} = usePlayerState();
   const playerState = usePlaybackState();
   const {position, duration} = useProgress(1000);
-  const [repeatMode, setRepeatMode] = useState<RepeatMode | null>(null);
   const {isShuffled, shuffleQueue} = useShuffleQueue();
 
   const isPlaying = playerState.state === State.Playing;
@@ -81,13 +83,6 @@ export const Controls = ({
     playerState.state === State.Paused || playerState.state === State.Ready;
   const loading =
     playerState.state === undefined || playerState.state === State.Loading;
-
-  useEffect(() => {
-    (async () => {
-      const currentRepeatMode = await TrackPlayer.getRepeatMode();
-      setRepeatMode(currentRepeatMode);
-    })();
-  }, []);
 
   const togglePlay = async () => {
     if (isPaused) {
@@ -104,20 +99,6 @@ export const Controls = ({
       TrackPlayer.skipToPrevious();
     }
     TrackPlayer.play();
-  };
-
-  const changeRepeatMode = async () => {
-    let newRepeatMode = RepeatMode.Off;
-
-    if (repeatMode === RepeatMode.Off) {
-      newRepeatMode = RepeatMode.Queue;
-    } else if (repeatMode === RepeatMode.Queue) {
-      newRepeatMode = RepeatMode.Track;
-    }
-
-    TrackPlayer.setRepeatMode(newRepeatMode);
-    StorageService.getInstance().setPlayerData({repeatMode: newRepeatMode});
-    setRepeatMode(newRepeatMode);
   };
 
   return (
@@ -178,7 +159,7 @@ export const Controls = ({
           }}>
           <IconEntypo name="controller-next" size={40} color="#E6C72E" />
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => changeRepeatMode()}>
+        <TouchableOpacity onPress={() => switchRepeatMode()}>
           {repeatMode === RepeatMode.Track ? (
             <IconMaterialCommunity
               name="repeat-once"

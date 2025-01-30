@@ -14,7 +14,7 @@ import {getPlayingFromText} from '../utils/getPlayingFromText';
 import {showSnackbar} from '../utils/showSnackbar';
 import {SavedQueueData} from '../schema/storage';
 import {useAppState} from '../Providers/AppProvider';
-import TrackPlayer from 'react-native-track-player';
+import {usePlayerState} from '../Providers/usePlayerState';
 
 const styles = StyleSheet.create({
   container: {
@@ -73,14 +73,8 @@ const styles = StyleSheet.create({
 });
 
 export const SavedQueues = ({showTracks}: {showTracks: () => void}) => {
-  const {
-    queueName,
-    setQueueName,
-    setQueue,
-    setStartQueue,
-    setIsShuffled,
-    setPlayingQueueFrom,
-  } = useAppState();
+  const {queueName} = useAppState();
+  const {playSavedQueue} = usePlayerState();
   const storageQueues = StorageService.getInstance().loadSavedQueues();
   const [savedQueues, setSavedQueues] = useState(storageQueues ?? []);
 
@@ -91,16 +85,7 @@ export const SavedQueues = ({showTracks}: {showTracks: () => void}) => {
   };
 
   const playQueue = async (queueData: SavedQueueData) => {
-    setQueueName(queueData.name);
-    setQueue(queueData.playingQueue);
-    setStartQueue(queueData.startQueue);
-    setIsShuffled(queueData.isShuffled);
-    setPlayingQueueFrom(queueData.playingFrom);
-    await TrackPlayer.reset();
-    await TrackPlayer.add(queueData.playingQueue);
-    await TrackPlayer.skip(queueData.playingTrackIndex);
-    await TrackPlayer.play();
-    StorageService.getInstance().setPlayerData({...queueData});
+    playSavedQueue(queueData);
     showTracks();
   };
 

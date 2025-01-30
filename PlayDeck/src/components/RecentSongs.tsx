@@ -3,6 +3,7 @@ import {StyleSheet, Text, View, FlatList} from 'react-native';
 import {ListItem} from './ListItem';
 import {useAppState} from '../Providers/AppProvider';
 import {chunkArray} from '../utils/chunkArray';
+import {usePlayerState} from '../Providers/usePlayerState';
 
 const styles = StyleSheet.create({
   container: {
@@ -40,7 +41,8 @@ const styles = StyleSheet.create({
 });
 
 export const RecentSongs = () => {
-  const {playNewPlaylist, recentSongs} = useAppState();
+  const {recentSongs} = useAppState();
+  const {playNewPlaylist} = usePlayerState();
 
   const rowSize = 2;
   const songs = chunkArray(recentSongs, rowSize);
