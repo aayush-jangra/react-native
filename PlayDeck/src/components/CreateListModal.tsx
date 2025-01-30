@@ -77,12 +77,14 @@ const styles = StyleSheet.create({
 
 export const CreatePlaylistModal = ({
   visible,
-  existingPlaylistNames,
+  existingNames,
+  type,
   onClose,
   onCreate,
 }: {
   visible: boolean;
-  existingPlaylistNames: string[];
+  existingNames: string[];
+  type: string;
   onClose: () => void;
   onCreate: (name: string) => void;
 }) => {
@@ -93,8 +95,8 @@ export const CreatePlaylistModal = ({
     const filteredName = text.replace(/[^a-zA-Z0-9\s]/g, '');
     setName(filteredName);
 
-    if (existingPlaylistNames.some(value => value === filteredName)) {
-      setError('Playlist already exists with this name');
+    if (existingNames.some(value => value === filteredName)) {
+      setError(`${type} already exists with this name`);
     } else {
       setError('');
     }

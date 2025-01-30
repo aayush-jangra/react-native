@@ -1,9 +1,6 @@
-import React, {useEffect, useState} from 'react';
-import {View, StyleSheet, FlatList, Dimensions, Text} from 'react-native';
-import TrackPlayer, {Event} from 'react-native-track-player';
+import React, {useState} from 'react';
+import {View, StyleSheet, Dimensions, TouchableOpacity} from 'react-native';
 import IconMaterial from 'react-native-vector-icons/MaterialIcons';
-import {ListItem} from './ListItem';
-import {useAppState} from '../Providers/AppProvider';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -11,6 +8,8 @@ import Animated, {
 } from 'react-native-reanimated';
 import {Gesture, GestureDetector} from 'react-native-gesture-handler';
 import {QUEUE_TAB_HEIGHT} from '../constants/styles';
+import {QueueTracks} from './QueueTracks';
+import {SavedQueues} from './SavedQueues';
 
 const styles = StyleSheet.create({
   container: {
@@ -30,92 +29,25 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 24,
     elevation: 100,
   },
-  loading: {
-    height: '100%',
-    width: '100%',
-  },
-  list: {
-    flex: 1,
-    width: '100%',
-    display: 'flex',
-    gap: 8,
-  },
   queueIcon: {
     height: 64,
-    width: '100%',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
   },
-  emptyQueue: {
-    flex: 1,
+  header: {
     width: '100%',
     display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
     alignItems: 'center',
-    justifyContent: 'center',
-  },
-  emptyQueueText: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: 'white',
-  },
-  selectedItem: {
-    backgroundColor: '#563900',
-  },
-  queueContainer: {
-    paddingHorizontal: 32,
-  },
-  playingFromText: {
-    fontSize: 12,
-    color: 'white',
-    alignSelf: 'flex-start',
-    marginLeft: 32,
-  },
-  playingFromTextList: {
-    fontWeight: 500,
-    color: '#2CB0F2',
   },
 });
 
 export const QueueList = () => {
-  const {queue, playingQueueFrom} = useAppState();
-  const [currentTrackIndex, setCurrentTrackIndex] = useState<
-    number | undefined
-  >();
+  const [showTracks, setShowTracks] = useState(true);
   const {height: screenHeight} = Dimensions.get('window');
   const eightyPercentHeight = screenHeight * 0.8;
-
-  useEffect(() => {
-    (async () => {
-      const ati = await TrackPlayer.getActiveTrackIndex();
-      setCurrentTrackIndex(ati);
-    })();
-  }, []);
-
-  const getPlayingFromText = () => {
-    let startText = '',
-      list = '';
-    if (playingQueueFrom.length) {
-      startText += 'Playing from ';
-      list = playingQueueFrom[0];
-
-      for (let i = 1; i < playingQueueFrom.length; i++) {
-        list += ', ' + playingQueueFrom[i];
-      }
-    }
-
-    return {startText, list};
-  };
-
-  TrackPlayer.addEventListener(Event.PlaybackActiveTrackChanged, ({index}) => {
-    setCurrentTrackIndex(index);
-  });
-
-  const playFromQueue = async (index: number) => {
-    await TrackPlayer.skip(index);
-    await TrackPlayer.play();
-    setCurrentTrackIndex(index);
-  };
 
   const offset = useSharedValue<number>(0);
   const viewHeight = useSharedValue(QUEUE_TAB_HEIGHT);
@@ -136,9 +68,7 @@ export const QueueList = () => {
   const tapGesture = Gesture.Tap()
     .onBegin(() => {})
     .onEnd(() => {
-      if (viewHeight.value === eightyPercentHeight) {
-        viewHeight.value = withTiming(QUEUE_TAB_HEIGHT);
-      } else {
+      if (viewHeight.value === QUEUE_TAB_HEIGHT) {
         viewHeight.value = withTiming(eightyPercentHeight);
       }
     });
@@ -161,52 +91,36 @@ export const QueueList = () => {
   }));
 
   return (
-    <Animated.View style={[styles.container, animatedStyles]}>
-      <GestureDetector gesture={composedGesture}>
-        <View style={styles.queueIcon}>
-          <IconMaterial name="queue-music" size={32} color="#E6C72E" />
-        </View>
-      </GestureDetector>
-      <Text numberOfLines={1} style={styles.playingFromText}>
-        {getPlayingFromText().startText}
-        <Text style={styles.playingFromTextList}>
-          {getPlayingFromText().list}
-        </Text>
-      </Text>
-      {queue ? (
-        <FlatList
-          style={styles.list}
-          data={queue}
-          renderItem={({item, index}) => {
-            const currentTrack =
-              currentTrackIndex !== null && currentTrackIndex === index;
-
-            return (
-              <View
-                style={[
-                  styles.queueContainer,
-                  currentTrack ? styles.selectedItem : {},
-                ]}>
-                <ListItem
-                  key={item.url}
-                  item={{
-                    title: item.title,
-                    subtitle: item.artist,
-                    duration: item.duration,
-                    artwork: item.artwork,
-                  }}
-                  onPress={() => playFromQueue(index)}
-                />
-              </View>
-            );
-          }}
-        />
-      ) : (
-        <View style={styles.emptyQueue}>
-          <IconMaterial name="music-off" size={128} color="#E82315" />
-          <Text style={styles.emptyQueueText}>Nothing is playing</Text>
-        </View>
-      )}
-    </Animated.View>
+    <>
+      <Animated.View style={[styles.container, animatedStyles]}>
+        <GestureDetector gesture={composedGesture}>
+          <View style={styles.header}>
+            <TouchableOpacity
+              onPress={() => setShowTracks(true)}
+              style={styles.queueIcon}>
+              <IconMaterial
+                name="queue-music"
+                size={32}
+                color={showTracks ? '#E6C72E' : 'white'}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => setShowTracks(false)}
+              style={styles.queueIcon}>
+              <IconMaterial
+                name="save"
+                size={32}
+                color={!showTracks ? '#E6C72E' : 'white'}
+              />
+            </TouchableOpacity>
+          </View>
+        </GestureDetector>
+        {showTracks ? (
+          <QueueTracks />
+        ) : (
+          <SavedQueues showTracks={() => setShowTracks(true)} />
+        )}
+      </Animated.View>
+    </>
   );
 };

@@ -15,6 +15,7 @@ export const AppProvider = ({children}: {children: React.ReactNode}) => {
   const [startQueue, setStartQueue] = useState<Track[] | null>(null);
   const [isPlayerSetup, setIsPlayerSetup] = useState(false);
   const [queue, setQueue] = useState<Track[] | null>(null);
+  const [queueName, setQueueName] = useState<string | undefined>();
   const [playingQueueFrom, setPlayingQueueFrom] = useState<string[]>([]);
   const [recentSongs, setRecentSongs] = useState<Track[]>([]);
   const [playlists, setPlaylists] = useState<PlaylistData[]>([]);
@@ -38,7 +39,9 @@ export const AppProvider = ({children}: {children: React.ReactNode}) => {
           isShuffled: isShuffledStorage,
           repeatMode,
           playingFrom,
+          name,
         } = storagePlayerData;
+        setQueueName(name);
         setQueue(playingQueue ?? null);
         setPlayingQueueFrom(playingFrom || []);
         setStartQueue(startQueueStorage ?? null);
@@ -76,6 +79,7 @@ export const AppProvider = ({children}: {children: React.ReactNode}) => {
   }: PlayNewPlaylistProps) => {
     const newPlaylist = [...tracks];
     setStartQueue([...tracks]);
+    setQueueName(undefined);
     if (shuffle) {
       shuffleArray(newPlaylist);
       setIsShuffled(true);
@@ -92,6 +96,7 @@ export const AppProvider = ({children}: {children: React.ReactNode}) => {
       startQueue: [...tracks],
       playingQueue: [...newPlaylist],
       isShuffled: shuffle,
+      name: undefined,
     });
   };
 
@@ -110,7 +115,10 @@ export const AppProvider = ({children}: {children: React.ReactNode}) => {
       value={{
         queue,
         setQueue,
+        queueName,
+        setQueueName,
         playingQueueFrom,
+        setPlayingQueueFrom,
         playNewPlaylist,
         isShuffled,
         setIsShuffled,

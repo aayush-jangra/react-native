@@ -1,5 +1,5 @@
 import {MMKV} from 'react-native-mmkv';
-import {PlayerData, PlaylistData} from '../schema/storage';
+import {PlayerData, PlaylistData, SavedQueueData} from '../schema/storage';
 import {Track} from 'react-native-track-player';
 import {SortOptions} from '../pages/Library/sortOptions';
 
@@ -8,6 +8,7 @@ export enum StorageKeys {
   RECENT_SONGS_DATA = 'recentSongsData',
   PLAYLISTS_DATA = 'playlistsData',
   SORT_PREFERENCE = 'sortPreference',
+  SAVED_QUEUES_DATA = 'savedQueuesData',
 }
 
 export class StorageService {
@@ -41,6 +42,7 @@ export class StorageService {
     repeatMode,
     isShuffled,
     playingFrom,
+    name,
   }: PlayerData) {
     let overrideData: Partial<PlayerData> = {};
     if (playingTrackIndex !== undefined) {
@@ -60,6 +62,9 @@ export class StorageService {
     }
     if (playingFrom !== undefined) {
       overrideData = {...overrideData, playingFrom};
+    }
+    if (name !== undefined) {
+      overrideData = {...overrideData, name};
     }
 
     const existingData = this.loadPlayerData();
@@ -183,5 +188,33 @@ export class StorageService {
 
   public setSortPreference(pref: SortOptions) {
     this.storage.set(StorageKeys.SORT_PREFERENCE, pref);
+  }
+
+  public loadSavedQueues() {
+    const queuesJson = this.storage.getString(StorageKeys.SAVED_QUEUES_DATA);
+    const queues = queuesJson
+      ? (JSON.parse(queuesJson) as SavedQueueData[])
+      : null;
+
+    return queues;
+  }
+
+  public saveQueue(queue: SavedQueueData) {
+    const existingQueues = this.loadSavedQueues() || [];
+    existingQueues.unshift(queue);
+
+    this.storage.set(
+      StorageKeys.SAVED_QUEUES_DATA,
+      JSON.stringify(existingQueues),
+    );
+  }
+
+  public deleteQueue(queueName: string) {
+    const existingQueues = this.loadSavedQueues() || [];
+
+    this.storage.set(
+      StorageKeys.SAVED_QUEUES_DATA,
+      JSON.stringify(existingQueues.filter(item => item.name !== queueName)),
+    );
   }
 }

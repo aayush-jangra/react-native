@@ -17,12 +17,15 @@ export interface AppState {
   setStartQueue: Dispatch<SetStateAction<Track[] | null>>;
   queue: Track[] | null;
   setQueue: Dispatch<SetStateAction<Track[] | null>>;
+  queueName: string | undefined;
+  setQueueName: Dispatch<SetStateAction<string | undefined>>;
   recentSongs: Track[];
   setRecentSongs: Dispatch<SetStateAction<Track[]>>;
   playlists: PlaylistData[];
   setPlaylists: Dispatch<SetStateAction<PlaylistData[]>>;
   loadPlaylistsFromStorage: () => void;
   playingQueueFrom: string[];
+  setPlayingQueueFrom: React.Dispatch<React.SetStateAction<string[]>>;
   playNewPlaylist: ({
     tracks,
     shuffle,

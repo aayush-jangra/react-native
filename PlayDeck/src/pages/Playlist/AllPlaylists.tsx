@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {FlatList, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import IconMaterial from 'react-native-vector-icons/MaterialIcons';
 import IconMaterialCommunity from 'react-native-vector-icons/MaterialCommunityIcons';
-import {CreatePlaylistModal} from '../../components/CreatePlaylistModal';
+import {CreatePlaylistModal} from '../../components/CreateListModal';
 import {ListItem} from '../../components/ListItem';
 import {StorageService} from '../../services/StorageService';
 import {useAppState} from '../../Providers/AppProvider';
@@ -294,9 +294,10 @@ export const AllPlaylists = () => {
         )}
         {showCreateModal && (
           <CreatePlaylistModal
+            type="Playlist"
             visible={showCreateModal}
             onClose={() => setShowCreateModal(false)}
-            existingPlaylistNames={existingPlaylistNames}
+            existingNames={existingPlaylistNames}
             onCreate={onCreate}
           />
         )}

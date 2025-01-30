@@ -1,15 +1,6 @@
 import {SortSongOrder} from 'react-native-get-music-files';
 import {RepeatMode, Track} from 'react-native-track-player';
 
-export interface PlayerData {
-  playingTrackIndex?: number;
-  startQueue?: Track[];
-  playingQueue?: Track[];
-  playingFrom?: string[];
-  isShuffled?: boolean;
-  repeatMode?: RepeatMode;
-}
-
 export interface PlaylistData {
   name: string;
   numberOfTracks: number;
@@ -30,3 +21,15 @@ export interface SortData {
   field: SortSongFields;
   order: SortSongOrder;
 }
+
+export interface SavedQueueData {
+  name: string;
+  playingTrackIndex: number;
+  startQueue: Track[];
+  playingQueue: Track[];
+  playingFrom: string[];
+  isShuffled: boolean;
+  repeatMode: RepeatMode;
+}
+
+export type PlayerData = Partial<SavedQueueData>;
