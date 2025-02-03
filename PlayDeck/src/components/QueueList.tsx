@@ -1,5 +1,11 @@
-import React, {useState} from 'react';
-import {View, StyleSheet, Dimensions, TouchableOpacity} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {
+  View,
+  StyleSheet,
+  Dimensions,
+  TouchableOpacity,
+  BackHandler,
+} from 'react-native';
 import IconMaterial from 'react-native-vector-icons/MaterialIcons';
 import Animated, {
   useAnimatedStyle,
@@ -51,6 +57,25 @@ export const QueueList = () => {
 
   const offset = useSharedValue<number>(0);
   const viewHeight = useSharedValue(QUEUE_TAB_HEIGHT);
+
+  useEffect(() => {
+    const onBackPress = () => {
+      if (viewHeight.value === QUEUE_TAB_HEIGHT) {
+        // Allow default behaviour by returing false
+        return false;
+      }
+
+      viewHeight.value = withTiming(QUEUE_TAB_HEIGHT);
+      return true;
+    };
+
+    BackHandler.addEventListener('hardwareBackPress', onBackPress);
+
+    return () => {
+      BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const panGesture = Gesture.Pan()
     .onChange(event => {

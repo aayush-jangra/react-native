@@ -95,9 +95,11 @@ export const QueueTracks = () => {
             {getPlayingFromText(playingQueueFrom).list}
           </Text>
         </Text>
-        <TouchableOpacity onPress={() => setShowInputModal(true)}>
-          <IconMaterial name="save-as" size={20} color="white" />
-        </TouchableOpacity>
+        {queue && (
+          <TouchableOpacity onPress={() => setShowInputModal(true)}>
+            <IconMaterial name="save-as" size={20} color="white" />
+          </TouchableOpacity>
+        )}
       </View>
       {queue ? (
         <FlatList

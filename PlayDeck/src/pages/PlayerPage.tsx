@@ -1,8 +1,8 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {Controls} from '../components/Controls';
 import {SongInfo} from '../components/SongInfo';
 import {QueueList} from '../components/QueueList';
-import {Dimensions, StyleSheet, View} from 'react-native';
+import {BackHandler, Dimensions, StyleSheet, View} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import {Gesture, GestureDetector} from 'react-native-gesture-handler';
 import Animated, {
@@ -42,6 +42,27 @@ export const PlayerPage = () => {
   const offset = useSharedValue(0);
   const viewHeight = useSharedValue(MINIPLAYER_HEIGHT);
   const showSlider = useSharedValue(false);
+
+  useEffect(() => {
+    const onBackPress = () => {
+      if (viewHeight.value === MINIPLAYER_HEIGHT) {
+        // Allow default behaviour by returing false
+        return false;
+      }
+
+      viewHeight.value = withTiming(MINIPLAYER_HEIGHT);
+      showSlider.value = false;
+
+      return true;
+    };
+
+    BackHandler.addEventListener('hardwareBackPress', onBackPress);
+
+    return () => {
+      BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const panGesture = Gesture.Pan()
     .onChange(event => {
