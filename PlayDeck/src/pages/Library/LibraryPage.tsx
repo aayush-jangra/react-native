@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useMemo, useState} from 'react';
 import {
   Dimensions,
   FlatList,
@@ -22,6 +22,9 @@ import {SortButton} from './SortButton';
 import {StorageService} from '../../services/StorageService';
 import {SortOptions} from './sortOptions';
 import {usePlayerState} from '../../Providers/usePlayerState';
+import {TextInput} from 'react-native-gesture-handler';
+import {Track} from 'react-native-track-player';
+import {debounce} from '../../utils/debounce';
 
 const ABSOLUTE_BUTTON_WIDTH = 96;
 const ABSOLUTE_BUTTON_TRANSLATE_BUFFER = 96;
@@ -103,6 +106,23 @@ export const libraryPageStyles = StyleSheet.create({
     borderTopLeftRadius: 48,
     borderBottomLeftRadius: 48,
   },
+  filters: {
+    display: 'flex',
+    flexDirection: 'row',
+    gap: 16,
+    padding: 16,
+    alignItems: 'center',
+  },
+  searchInput: {
+    backgroundColor: '#00000080',
+    flex: 1,
+    borderRadius: 24,
+    display: 'flex',
+    flexDirection: 'row',
+    gap: 16,
+    paddingHorizontal: 16,
+    alignItems: 'center',
+  },
 });
 
 export const LibraryPage = () => {
@@ -111,6 +131,8 @@ export const LibraryPage = () => {
 
   const defaultSortOption: SortOptions = storageSort || 'a2z';
 
+  const [searchInput, setSearchInput] = useState('');
+  const [filteredSongs, setFilteredSongs] = useState<Track[] | null>(null);
   const [sortOption, setSortOption] = useState<SortOptions>(defaultSortOption);
   const {isLoading, songs, error} = useLoadSongsFromStorage(sortOption);
   const scrollOffset = useSharedValue(0);
@@ -151,6 +173,20 @@ export const LibraryPage = () => {
     ],
   }));
 
+  const filterDebounce = useMemo(
+    () =>
+      debounce(
+        ({allSongs, searchString}: {allSongs: any[]; searchString: string}) => {
+          setFilteredSongs(
+            allSongs.filter(song =>
+              song.title?.toLowerCase().includes(searchString.toLowerCase()),
+            ),
+          );
+        },
+      ),
+    [],
+  );
+
   if (isLoading) {
     return <LibraryPageFallback type="loading" />;
   }
@@ -166,6 +202,21 @@ export const LibraryPage = () => {
   const onSortingChange = (sortPref: SortOptions) => {
     setSortOption(sortPref);
     StorageService.getInstance().setSortPreference(sortPref);
+  };
+
+  const handleSearchInputChange = (text: string) => {
+    setSearchInput(text);
+    filterDebounce({allSongs: songs, searchString: text});
+  };
+
+  const handleSongClick = (url: string) => {
+    const index = songs.findIndex(song => song.url === url);
+
+    playNewPlaylist({
+      playingFrom: 'Library',
+      tracks: songs,
+      skipIndex: index === -1 ? 0 : index,
+    });
   };
 
   return (
@@ -211,26 +262,38 @@ export const LibraryPage = () => {
             </TouchableOpacity>
           </Animated.View>
         </View>
-        <SortButton
-          sortPreference={sortOption}
-          onSortingChange={onSortingChange}
-        />
+        <View style={libraryPageStyles.filters}>
+          <View style={libraryPageStyles.searchInput}>
+            <TextInput
+              value={searchInput}
+              style={libraryPageStyles.container}
+              placeholder="Search"
+              onChangeText={handleSearchInputChange}
+            />
+            {searchInput && (
+              <IconEntypo
+                onPress={() => handleSearchInputChange('')}
+                name="circle-with-cross"
+                size={24}
+                color="white"
+              />
+            )}
+          </View>
+          <SortButton
+            sortPreference={sortOption}
+            onSortingChange={onSortingChange}
+          />
+        </View>
         <FlatList
           scrollEnabled={false}
           style={libraryPageStyles.list}
-          data={songs}
-          renderItem={({item, index}) => (
+          data={filteredSongs ?? songs}
+          renderItem={({item}) => (
             <SongItem
               playingFrom="Library"
               key={item.url}
               item={item}
-              onPress={() =>
-                playNewPlaylist({
-                  playingFrom: 'Library',
-                  tracks: songs,
-                  skipIndex: index,
-                })
-              }
+              onPress={() => handleSongClick(item.url)}
             />
           )}
         />

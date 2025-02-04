@@ -9,7 +9,6 @@ const styles = StyleSheet.create({
   sorting: {
     display: 'flex',
     alignItems: 'flex-end',
-    padding: 16,
   },
   container: {
     backgroundColor: '#222625',
