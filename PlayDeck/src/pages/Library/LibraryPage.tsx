@@ -206,7 +206,11 @@ export const LibraryPage = () => {
 
   const handleSearchInputChange = (text: string) => {
     setSearchInput(text);
-    filterDebounce({allSongs: songs, searchString: text});
+    if (text) {
+      filterDebounce({allSongs: songs, searchString: text});
+    } else {
+      setFilteredSongs(null);
+    }
   };
 
   const handleSongClick = (url: string) => {
