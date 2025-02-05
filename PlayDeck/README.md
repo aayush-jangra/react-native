@@ -1,79 +1,88 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# Play Deck
 
-# Getting Started
+**Play Deck** is a modern music player app built with React Native and TypeScript that offers a unique user experience with advanced queue and playlist management. Whether you're looking to create custom playlists or switch between different song queues seamlessly, Play Deck has you covered.
+
+## Table of Contents
+- [Overview](#overview)
+- [Features](#features)
+- [Technologies & Packages](#technologies--packages)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Screenshots](#screenshots)
+- [Contributing](#contributing)
+- [License](#license)
+- [Questions & Future Improvements](#questions--future-improvements)
+
+## Overview
+
+**Play Deck** lets you browse your entire music library, create and manage playlists, and even save multiple queues. This innovative approach allows you to play various genres and quickly switch between different song queues without losing your place.
+
+## Features
+
+- **Library Page:** View all songs available on your device.
+- **Playlist Management:** Create, edit, and delete playlists.
+- **Queue Management:**
+  - Save queues to resume playback later.
+  - View all sources for the current queue—a unique feature that sets Play Deck apart.
+- **Playback Controls:** Shuffle, repeat, and smooth transition between queues.
+- **Search & Sort:**
+  - Search for songs by title.
+  - Sort songs alphabetically (A2Z, Z2A) or by date added (recently added, oldest added).
+- **User Interface Enhancements:**
+  - Smooth animations and modern design.
+  - Custom gradients and icons for an engaging user experience.
+
+## Technologies & Packages
+
+### Core Technologies
+- **React Native** (with TypeScript)
+
+### UI & Animation Enhancements
+- [react-native-gesture-handler](https://github.com/software-mansion/react-native-gesture-handler)
+- [react-native-linear-gradient](https://github.com/react-native-linear-gradient/react-native-linear-gradient)
+- [react-native-reanimated](https://github.com/software-mansion/react-native-reanimated)
+- [react-native-snackbar](https://github.com/cooperka/react-native-snackbar)
+
+### Music & Data Management
+- [react-native-get-music-files](https://github.com/cinder92/react-native-get-music-files)
+- [react-native-track-player](https://github.com/DoubleSymmetry/react-native-track-player)
+- [react-native-mmkv](https://github.com/mrousavy/react-native-mmkv)
+
+### Icons & Assets
+- [react-native-vector-icons](https://github.com/oblador/react-native-vector-icons)
+- Icons sourced from [Freepik](https://www.freepik.com)
+
+## Installation
+
+### Prerequisites
+- Node.js (LTS recommended)
+- React Native CLI (or Expo CLI if applicable)
+- Android Studio / Xcode for building and testing
+
+### Clone the Repository
+```bash
+git clone https://github.com/yourusername/play-deck.git
+cd play-deck
+```
+
+### Install Dependencies
+```bash
+npm install
+# or
+yarn install
+```
+
+### Running the app
+```bash
+npx react-native run-android
+```
 
 >**Note**: Make sure you have completed the [React Native - Environment Setup](https://reactnative.dev/docs/environment-setup) instructions till "Creating a new application" step, before proceeding.
 
-## Step 1: Start the Metro Server
-
-First, you will need to start **Metro**, the JavaScript _bundler_ that ships _with_ React Native.
-
-To start Metro, run the following command from the _root_ of your React Native project:
-
-```bash
-# using npm
-npm start
-
-# OR using Yarn
-yarn start
-```
-
-## Step 2: Start your Application
-
-Let Metro Bundler run in its _own_ terminal. Open a _new_ terminal from the _root_ of your React Native project. Run the following command to start your _Android_ or _iOS_ app:
-
-### For Android
-
-```bash
-# using npm
-npm run android
-
-# OR using Yarn
-yarn android
-```
-
-### For iOS
-
-```bash
-# using npm
-npm run ios
-
-# OR using Yarn
-yarn ios
-```
-
 If everything is set up _correctly_, you should see your new app running in your _Android Emulator_ or _iOS Simulator_ shortly provided you have set up your emulator/simulator correctly.
 
-This is one way to run your app — you can also run it directly from within Android Studio and Xcode respectively.
-
-## Step 3: Modifying your App
-
-Now that you have successfully run the app, let's modify it.
-
-1. Open `App.tsx` in your text editor of choice and edit some lines.
-2. For **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Developer Menu** (<kbd>Ctrl</kbd> + <kbd>M</kbd> (on Window and Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (on macOS)) to see your changes!
-
-   For **iOS**: Hit <kbd>Cmd ⌘</kbd> + <kbd>R</kbd> in your iOS Simulator to reload the app and see your changes!
-
-## Congratulations! :tada:
-
-You've successfully run and modified your React Native App. :partying_face:
-
-### Now what?
-
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [Introduction to React Native](https://reactnative.dev/docs/getting-started).
-
-# Troubleshooting
-
+### Troubleshooting
 If you can't get this to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
 
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+## Future Improvements
+New features will be added soon! Planned updates include additional customization options, enhanced performance optimizations, and more intuitive user controls. Stay tuned for updates and feel free to suggest new ideas or improvements.
