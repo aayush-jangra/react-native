@@ -7,11 +7,7 @@
 - [Features](#features)
 - [Technologies & Packages](#technologies--packages)
 - [Installation](#installation)
-- [Usage](#usage)
-- [Screenshots](#screenshots)
-- [Contributing](#contributing)
-- [License](#license)
-- [Questions & Future Improvements](#questions--future-improvements)
+- [Future](#future)
 
 ## Overview
 
@@ -50,19 +46,19 @@
 
 ### Icons & Assets
 - [react-native-vector-icons](https://github.com/oblador/react-native-vector-icons)
-- Icons sourced from [Freepik](https://www.freepik.com)
+- App icon created from [Freepik](https://www.freepik.com)
 
 ## Installation
 
 ### Prerequisites
 - Node.js (LTS recommended)
-- React Native CLI (or Expo CLI if applicable)
-- Android Studio / Xcode for building and testing
+- React Native CLI
+- Android Studio for building and testing
 
 ### Clone the Repository
 ```bash
-git clone https://github.com/yourusername/play-deck.git
-cd play-deck
+git clone https://github.com/aayush-jangra/react-native.git
+cd cd .\react-native\PlayDeck\
 ```
 
 ### Install Dependencies
@@ -77,12 +73,12 @@ yarn install
 npx react-native run-android
 ```
 
->**Note**: Make sure you have completed the [React Native - Environment Setup](https://reactnative.dev/docs/environment-setup) instructions till "Creating a new application" step, before proceeding.
+>**Note**: Make sure you have completed the [React Native - Environment Setup](https://reactnative.dev/docs/set-up-your-environment) instructions before proceeding.
 
-If everything is set up _correctly_, you should see your new app running in your _Android Emulator_ or _iOS Simulator_ shortly provided you have set up your emulator/simulator correctly.
+If everything is set up _correctly_, you should see your new app running in your _Android Emulator_  shortly provided you have set up your emulator correctly.
 
 ### Troubleshooting
 If you can't get this to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
 
-## Future Improvements
+## Future
 New features will be added soon! Planned updates include additional customization options, enhanced performance optimizations, and more intuitive user controls. Stay tuned for updates and feel free to suggest new ideas or improvements.

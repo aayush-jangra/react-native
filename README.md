@@ -23,8 +23,8 @@ Check out the [Play Deck README](./PlayDeck/README.md) for more details on this 
 
 1. **Clone the Repository:**
 ```bash
-git clone https://github.com/yourusername/react-native-projects.git
-cd react-native-projects
+git clone https://github.com/aayush-jangra/react-native.git
+cd react-native
 ```
 
 2. **Explore Projects:**
