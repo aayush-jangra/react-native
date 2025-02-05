@@ -86,3 +86,11 @@ New features will be added soon! Planned updates include additional customizatio
 
 ## Screenshots
 ![Image](https://github.com/user-attachments/assets/7a5ecda1-684d-4faa-b865-3cac25555a52)
+![Image](https://github.com/user-attachments/assets/68e2c7aa-6012-4d35-982b-7e35f6af15f9)
+![Image](https://github.com/user-attachments/assets/fcfd27d8-c159-4386-9d3a-cb0ad547e560)
+![Image](https://github.com/user-attachments/assets/3eae8e49-e5ae-44a8-9e9e-243adb1af4a9)
+![Image](https://github.com/user-attachments/assets/859ce65d-b2d1-4eee-9aad-2c112c38a453)
+![Image](https://github.com/user-attachments/assets/15aba96b-dfe2-482a-a283-228626da743c)
+![Image](https://github.com/user-attachments/assets/8e451115-fe66-4f48-b4e7-25b0c2f78471)
+![Image](https://github.com/user-attachments/assets/69dee912-f135-434c-af69-5ba69f221894)
+![Image](https://github.com/user-attachments/assets/69086b90-c297-4c50-b38f-6a7c8777f0d6)
