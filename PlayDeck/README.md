@@ -8,6 +8,7 @@
 - [Technologies & Packages](#technologies--packages)
 - [Installation](#installation)
 - [Future](#future)
+- [Screenshots](#screenshots)
 
 ## Overview
 
@@ -82,3 +83,6 @@ If you can't get this to work, see the [Troubleshooting](https://reactnative.dev
 
 ## Future
 New features will be added soon! Planned updates include additional customization options, enhanced performance optimizations, and more intuitive user controls. Stay tuned for updates and feel free to suggest new ideas or improvements.
+
+## Screenshots
+![Image](https://github.com/user-attachments/assets/7a5ecda1-684d-4faa-b865-3cac25555a52)
